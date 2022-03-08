@@ -130,3 +130,6 @@ dmypy.json
 
 # IntelliJ IDEA
 .idea/
+
+# Database testing
+*.sqlite
