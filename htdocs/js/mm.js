@@ -508,6 +508,10 @@ async function chat() {
                 messagediv.style.fontStyle = 'italic';
                 messagediv.style.color = 'blue';
             }
+            if (js.message.match('@' + prefs.credentials.login + "\\b")) {
+                messagediv.style.fontWeight = 'bold';
+                messagediv.style.color = 'purple';
+            }
             let linediv = new HTML('div', {class: 'line'});
             linediv.inject(datediv);
             linediv.inject(namediv);
