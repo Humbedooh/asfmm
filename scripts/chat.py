@@ -83,7 +83,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                         state.attendees[cookie.state["credentials"]["login"]] = time.time()
                         currently_attending = []
                         for k, v in state.attendees.items():
-                            if v >= time.time() - WEBSOCKET_TIMEOUT
+                            if v >= time.time() - WEBSOCKET_TIMEOUT:
                                 currently_attending.append(k)
                         await ws.send_json({"pong": str(uuid.uuid4()), "current": currently_attending, "attendees": len(currently_attending), "max": len(state.attendees)})
                     pongometer += 1
