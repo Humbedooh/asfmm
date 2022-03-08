@@ -398,6 +398,7 @@ let rooms = [];
 let current_room = null;
 let notify_user = false;
 const URL_RE = new RegExp("(" + "(?:(?:[a-z]+)://)" + "(?:\\S+(?::\\S*)?@)?" + "(?:" + "([01][0-9][0-9]|2[0-4][0-9]|25[0-5])" + "|" + "(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" + "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" + "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" + "\\.?" + ")" + "(?::\\d{2,5})?" + "(?:[/?#]([^,<>()\\[\\] \\t\\r\\n]|(<[^:\\s]*?>|\\([^:\\s]*?\\)|\\[[^:\\s]*?\\]))*)?" + ")\\.?", "mi");
+let wscon = null;
 
 // Grabs credentials or goes to oauth screen
 async function get_preferences() {
@@ -456,19 +457,22 @@ async function main() {
 
 async function chat() {
 
-    const socket = new WebSocket('wss://' + location.hostname + '/chat');
+    wscon = new WebSocket('wss://' + location.hostname + '/chat');
     // Connection killed
-    socket.addEventListener('close', function (event) {
+    wscon.addEventListener('close', function (event) {
         location.reload();
     });
 
-    socket.addEventListener('error', function (event) {
+    wscon.addEventListener('error', function (event) {
         alert("Connection was lost, reloading..!");
         location.reload();
     });
-
+    window.onbeforeunload = function() {
+        wscon.close();
+        console.log("Closing chat...");
+    }
     // Listen for messages
-    socket.addEventListener('message', function (event) {
+    wscon.addEventListener('message', function (event) {
         const js = JSON.parse(event.data);
         if (js.room_data) {
             js.room_data.unread = 0;
