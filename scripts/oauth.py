@@ -65,6 +65,22 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                         "pending_messages": messages,
                     }
                     return redirect("/")
+    elif provider == "guest":
+        code = formdata.get("code")
+        if code and code in state.invites:
+            cookie.state = {
+                "credentials": {
+                    "login": "guest/" + state.invites[code]["inviter"],
+                    "name": state.invites[code]["name"],
+                    "provider": "Invite Code",
+                },
+                "pending_messages": [],
+            }
+            del state.invites[code]
+            return redirect("/")
+        else:
+            return "Could not find invite code. It may have already been used."
+
 
 
 def register(state: typing.Any):

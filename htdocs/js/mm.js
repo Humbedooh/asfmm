@@ -401,8 +401,12 @@ const URL_RE = new RegExp("(" + "(?:(?:[a-z]+)://)" + "(?:\\S+(?::\\S*)?@)?" + "
 let wscon = null;
 
 // Grabs credentials or goes to oauth screen
-async function get_preferences() {
+async function get_preferences(formdata) {
     const xprefs = await GET("/preferences");
+    if (formdata.get("action") == 'invite') {
+        location.href = '/oauth?provider=guest&' + formdata.toString();
+        return
+    }
     if (xprefs.credentials === null && location.pathname !== "/oauth.html") {
         window.localStorage.setItem('mm_redirect', location.href);
         location.href = "/oauth.html";
@@ -424,8 +428,8 @@ function notify(room, sender, message) {
 
 // OAuth gateway function
 async function oauth_gate(func) {
-    prefs = await get_preferences();
     const form_data = new URLSearchParams(location.search);
+    prefs = await get_preferences(form_data);
     if (prefs && prefs.credentials) {
         await func(form_data);
     }
@@ -445,6 +449,20 @@ function write_creds() {
     for (let user of current_people) {
         let udiv = new HTML('div', {}, user);
         userlist.inject(udiv);
+    }
+    // non-guests can invite others
+    if (!prefs.credentials.login.startsWith("guest")) {
+        document.getElementById('invite').style.display = 'block';
+    }
+}
+
+async function invite() {
+    let name = window.prompt("Please enter the full name of the person you wish to invite");
+    if (name && name.length) {
+        let resp = await POST("/invite", {name: name});
+        if (resp && resp.success) {
+            alert(resp.url);
+        }
     }
 }
 

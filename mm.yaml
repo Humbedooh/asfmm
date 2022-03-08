@@ -2,7 +2,7 @@ database: asfmm.sqlite
 oauth:
   asf:
     callback_url:  "https://localhost.apache.org/oauth?provider=asf&step=callback"
-
+    invite_url: "https://localhost.apache.org/?action=invite&code="
 channels:
   asfmembers:
     name: "ASF Members Meeting"

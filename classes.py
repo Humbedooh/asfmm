@@ -73,6 +73,7 @@ class State:
         self.rooms: list = []
         self.pending_messages: dict = {}
         self.attendees: dict = {}
+        self.invites: dict = {}
         db_name = self.config["database"]
         self.db: asfpy.sqlite.DB = asfpy.sqlite.DB(db_name)
 
