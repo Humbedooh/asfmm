@@ -55,6 +55,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                 ) as rv:
                     response = await rv.json()
                     messages: list = []
+                    msghash = uuid.uuid4()
                     cookie.state = {
                         "credentials": {
                             "login": response['uid'],
@@ -63,7 +64,6 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                         },
                         "pending_messages": messages,
                     }
-                    state.pending_messages[cookie.cookie] = messages
                     return redirect("/")
 
 

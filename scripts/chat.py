@@ -21,6 +21,7 @@ import aiohttp.web
 import uuid
 import asyncio
 import time
+import uuid
 """ Chat interface via WebSockets """
 
 WEBSOCKET_TIMEOUT = 15  # After 15 seconds of no activity, we consider someone signed out.
@@ -34,6 +35,8 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
         }
     ws = aiohttp.web.WebSocketResponse()
     await ws.prepare(request)
+    hashuid = uuid.uuid4()
+    state.pending_messages[hashuid] = []
     try:
         while not ws.closed:
             pongometer = 0
@@ -65,9 +68,9 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                     })
             # now new pendings...
             while True:
-                if len(cookie.state["pending_messages"]):
-                    to_send = cookie.state["pending_messages"].copy()  # copy to prevent race condition
-                    cookie.state["pending_messages"].clear()  # clear, so next iteration we only get new messages
+                if len(state.pending_messages[hashuid]):
+                    to_send = state.pending_messages[hashuid].copy()  # copy to prevent race condition
+                    state.pending_messages[hashuid].clear()  # clear, so next iteration we only get new messages
                     for message in to_send:
                         await ws.send_json({
                             "msgid": message["uid"],
@@ -89,8 +92,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                     await asyncio.sleep(0.2)
     except asyncio.exceptions.CancelledError:
         pass
-    if cookie.cookie in state.pending_messages:
-        del state.pending_messages[cookie.cookie]
+    del state.pending_messages[hashuid]
     return {}
 
 
