@@ -1,0 +1,13 @@
+database: asfmm.sqlite
+oauth:
+  asf:
+    callback_url:  "https://localhost.apache.org/oauth?provider=asf&step=callback"
+
+channels:
+  asfmembers:
+    name: "ASF Members Meeting"
+    topic: "Official channel for the annual members meeting"
+  backchannel:
+    name: "Back-channel"
+    topic: "Chat away here!"
+

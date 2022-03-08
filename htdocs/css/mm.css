@@ -1,0 +1,254 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+html {
+    background: linear-gradient(45deg, rgba(143,210,247,1) 0%,rgba(13,193,103,1) 100%);
+    background-size: cover;
+    font-family: Montserrat;
+    min-height: 100%;
+}
+
+#login {
+    min-width: 400px;
+    max-width: 700px;
+    background: white;
+    border-radius: 4px;
+    border: 1.5px solid #333;
+    margin: 40px auto;
+}
+
+#login h2 {
+    text-align: center;
+}
+
+#login a {
+    display: block;
+    border-radius: 4px;
+    margin: 5px auto;
+    text-align: center;
+    background: white;
+    width: 40%;
+}
+
+#login a>img {
+    width: 100%;
+    border-radius: 4px;
+    background: white;
+    transition: background 200ms linear;
+    box-shadow: 0px 0px 1.5px 1.5px #0004;
+    padding: 12px;
+}
+
+#login a>img:hover {
+    background: #fff9d7;
+}
+
+input[type="text"], textarea {
+    background-color: #F7F7F7;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.15rem;
+    padding: 6px;
+    box-shadow: 0px 0px 1.5px 1.5px #0006;
+    border: 1.5px solid #0000;
+    border-spacing: 4px;
+    transition: border 150ms linear;
+    min-width: 400px;
+}
+
+input[type="text"]:hover, textarea:hover {
+    border: 1.5px solid deeppink;
+    border-spacing: 0px;
+}
+
+input[type="text"]:focus, textarea:focus {
+    outline: none;
+    border: 1.5px solid deeppink;
+}
+
+#credentials {
+    font-size: 0.9rem;
+    text-align: center;
+    background-color: #fff6d7;
+    border-radius: 5px;
+    padding: 3px;
+    margin: 4px;
+    margin-bottom: 16px;
+}
+
+footer {
+    font-size: 0.8rem;
+    text-align: center;
+    background-color: #d7eeff99;
+    border-radius: 5px;
+    padding: 2px;
+    margin: 4px auto;
+    text-align: center;
+    position: absolute;
+    bottom: 10px;
+    left: 5%;
+    width: 90%;
+}
+
+#action_picker {
+    background-color: #F7F7F7;
+    display: block;
+    width: 360px;
+    border-radius: 6px;
+    margin: 0 auto;
+    text-indent: 0px;
+    text-align: center;
+    padding-top: 6px;
+}
+
+#action_picker ul {
+    list-style: none;
+    margin: 10px auto;
+    padding: 0;
+    display: inline-block;
+    width: calc(100% - 60px);
+}
+
+#action_picker li {
+    background-color: #afc6d0;
+    color: white;
+    border-radius: 5px;
+    margin: 6px;
+    padding: 4px;
+    calc(100% - 32px);
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0px 4px #7c8f96;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+#action_picker a {
+    color: white;
+    text-decoration: none;
+}
+
+#action_picker li:hover {
+    background-color: #d2e7f1;
+    cursor: pointer;
+}
+
+#action_picker li[type="active"] {
+    background-color: #c90584;
+    box-shadow: 0px 4px #980b8c;
+}
+
+#action_picker li[type="active"]:hover {
+    background-color: #e80d9b;
+    cursor: pointer;
+}
+
+
+
+
+#header {
+    text-align: center;
+}
+
+#header img {
+    width: 400px;
+}
+
+#tos {
+    min-width: 700px;
+    max-width: 900px;
+    background: white;
+    border-radius: 4px;
+    border: 1.5px solid #333;
+    margin: 40px auto;
+}
+
+
+.channel {
+    width: calc(90% - 300px);
+    height: 500px;
+    background: white;
+    border-radius: 4px;
+    border: 1.5px solid #333;
+    margin: 30px auto;
+    overflow-y: scroll;
+    padding: 4px;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}
+
+.line {
+    min-height: 1.25rem;
+    line-height: 1rem;
+    vertical-align: top;
+    margin-bottom: 5px;
+}
+
+.line > * {
+    vertical-align: top;
+}
+
+.line:nth-child(odd) {
+    background-color: #FAFAFA;
+}
+.timestamp {
+    width: 120px;
+    display: inline-block;
+    height: 1.25rem;
+    line-height: 1rem;
+    font-family: monospace;
+    font-size: 1rem;
+}
+
+.name {
+    width: 230px;
+    height: 1.25rem;
+    line-height: 1rem;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.message {
+    width: calc(100% - 440px);
+    display: inline-block;
+    white-space: pre-wrap;
+    position: relative;
+}
+
+
+#counter {
+    display: inline-block;
+    background-color: aliceblue;
+    width: 250px;
+    max-height: 100%;
+    vertical-align: top;
+    position: relative;
+    margin-top: 30px;
+    overflow-y: scroll;
+}
+
+
+#main {
+    max-width: 90%;
+    margin: 0 auto;
+    min-height: 400px;
+}
+
+
+input[type="button"] {
+    background-color: #2e73b7;
+    color: white;
+    border-radius: 5px;
+    margin: 6px;
+    padding: 4px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0px 4px #7c967d;
+    vertical-align: top;
+    text-decoration: none;
+    cursor: pointer;
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/mm.css"/>
+    <title>ASF Members Meeting</title>
+</head>
+<body onload="oauth_gate(main);">
+<div id="header">
+    <img src="/images/logo.png"/>
+</div>
+<div id="credentials"></div>
+<div id="action_picker">
+    <ul id="chanpicker">
+    </ul>
+</div>
+<div id="main">
+    <div id="counter">
+
+    </div>
+</div>
+<div style="text-align: center">Type stuff here: <br/><textarea id="mooosage" onkeydown="check_send(this);"></textarea>
+    <input type="button" value="Send" onclick="check_send(document.getElementById('mooosage'), true);">
+</div>
+<input type="checkbox" id="notify"><label for="notify">Enable notifications</label>
+
+<script src="/js/mm.js" type="application/ecmascript"></script>
+</body>
+</html>
