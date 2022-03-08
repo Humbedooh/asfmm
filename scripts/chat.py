@@ -77,7 +77,6 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                             "realname": message["realname"],
                             "message": message["message"],
                         })
-
                 else:
                     if pongometer % 25 == 0:
                         state.attendees[cookie.state["credentials"]["login"]] = time.time()
@@ -90,6 +89,8 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                     await asyncio.sleep(0.2)
     except asyncio.exceptions.CancelledError:
         pass
+    if cookie.cookie in state.pending_messages:
+        del state.pending_messages[cookie.cookie]
     return {}
 
 

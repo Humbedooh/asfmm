@@ -62,9 +62,8 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                             "provider": "Apache OAuth",
                         },
                         "pending_messages": messages,
-
                     }
-                    state.pending_messages[response["uid"]] = messages
+                    state.pending_messages[cookie.cookie] = messages
                     return redirect("/")
 
 
