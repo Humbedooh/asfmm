@@ -544,13 +544,7 @@ async function chat() {
         }
         if (js.channel) {
             let channeldiv = document.getElementById('channel_' + js.channel);
-            if (!channeldiv) {
-                channeldiv = document.createElement('div');
-                channeldiv.setAttribute('id', 'channel_' + js.channel);
-                channeldiv.setAttribute('class', 'channel');
-                document.getElementById('main').appendChild(channeldiv);
-                if (js.channel != current_room) channeldiv.style.display = 'none';
-            }
+            if (!channeldiv) channeldiv =  mkchannel(js.channel);
             const now = moment(js.timestamp * 1000.0).fromNow();
             let messagediv = new HTML('div', {class: 'message'});
             let datediv = new HTML('div', {class: 'timestamp', tz: js.timestamp*1000.0}, now);
@@ -627,6 +621,24 @@ function check_send(el, force=false) {
     }
 }
 
+function mkchannel(chan) {
+    let channeldiv = document.getElementById('channel_' + chan);
+    if (!channeldiv) {
+        channeldiv = document.createElement('div');
+        channeldiv.setAttribute('id', 'channel_' + chan);
+        channeldiv.setAttribute('class', 'channel');
+        document.getElementById('main').appendChild(channeldiv);
+        if (chan != current_room) channeldiv.style.display = 'none';
+        let topic = '';
+        for (let channel of rooms) {
+            if (channel.id == chan) topic = channel.topic;
+        }
+        let topicdiv = new HTML('div', {class: 'topic'}, topic);
+        channeldiv.inject(topicdiv);
+        return channeldiv
+    }
+}
+
 
 function show_channel(chan) {
     let chandiv = document.getElementById('channel_' + current_room);
@@ -634,12 +646,7 @@ function show_channel(chan) {
 
     current_room = chan;
     chandiv = document.getElementById('channel_' + chan);
-    if (!chandiv) {
-        chandiv = document.createElement('div');
-        chandiv.setAttribute('id', 'channel_' + chan);
-        chandiv.setAttribute('class', 'channel');
-        document.getElementById('main').appendChild(chandiv);
-    }
+    if (!chandiv) chandiv = mkchannel(chan);
     chandiv.style.display = 'inline-block';
     chandiv.scrollTo(0, chandiv.scrollHeight);
 
@@ -667,17 +674,20 @@ function show_channel(chan) {
 }
 
 // Enable/disable notifications for nick mentions
-document.getElementById('notify').addEventListener('click', (event) => {
-    if (event.target.checked) {
-        Notification.requestPermission().then(function (result) {
-            if (result == 'granted') {
-                notify_user = true;
-                console.log("Enabling notifications");
-            }
-        });
-    } else {
-        notify_user = false;
-        console.log("Disabling notifications");
-    }
+let notifydiv = document.getElementById('notify');
+if (notifydiv) {
+    notifydiv.addEventListener('click', (event) => {
+        if (event.target.checked) {
+            Notification.requestPermission().then(function (result) {
+                if (result == 'granted') {
+                    notify_user = true;
+                    console.log("Enabling notifications");
+                }
+            });
+        } else {
+            notify_user = false;
+            console.log("Disabling notifications");
+        }
 
-});
+    });
+}
