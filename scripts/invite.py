@@ -27,7 +27,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
     invitee = formdata.get("name")
     sender = cookie.state["credentials"]["login"]
-    if not cookie or not invitee or sender.startswith("guest_"):
+    if not cookie or not invitee or sender.startswith("guest_") or sender in state.banned:
         return {"success": False, "message": "Oops, something went terribly wrong here!"}
 
     realname = cookie.state["credentials"]["name"]
