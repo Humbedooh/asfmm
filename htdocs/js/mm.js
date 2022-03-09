@@ -593,7 +593,7 @@ async function chat() {
                 document.getElementById('main').appendChild(channeldiv);
                 if (js.channel != current_room) channeldiv.style.display = 'none';
             }
-            const now = new Date(js.timestamp * 1000.0).toLocaleTimeString();
+            const now = new Date(js.timestamp * 1000.0).ISOBare();
             let messagediv = new HTML('div', {class: 'message'});
             let datediv = new HTML('div', {class: 'timestamp'}, `[${now}]`);
             datediv.title = new Date(js.timestamp * 1000.0).toString();

@@ -192,12 +192,12 @@ footer {
     background-color: #FAFAFA;
 }
 .timestamp {
-    width: 120px;
+    width: 180px;
     display: inline-block;
     height: 1.25rem;
     line-height: 1rem;
     font-family: monospace;
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
 .name {
