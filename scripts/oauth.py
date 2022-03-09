@@ -68,9 +68,13 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     elif provider == "guest":
         code = formdata.get("code")
         if code and code in state.invites:
+            guest_prefix = 1
+            for attendee in state.attendees.keys():
+                if attendee.startswith("guest_"):
+                    guest_prefix += 1
             cookie.state = {
                 "credentials": {
-                    "login": "guest/" + state.invites[code]["inviter"],
+                    "login": "guest_" + str(guest_prefix) + "/" + state.invites[code]["inviter"],
                     "name": state.invites[code]["name"],
                     "provider": "Invite Code",
                 },
