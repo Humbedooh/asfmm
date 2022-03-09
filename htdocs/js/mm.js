@@ -528,12 +528,12 @@ async function invite() {
     if (name && name.length) {
         let resp = await POST("/invite", {name: name});
         if (resp && resp.success) {
-            show_invite(resp.url);
+            show_invite(resp.url, name);
         }
     }
 }
 
-function show_invite(url) {
+function show_invite(url, name) {
     let modal = document.getElementById("modal");
     let span = document.getElementsByClassName("close")[0];
     let text = document.getElementById('modal_text');
@@ -546,7 +546,7 @@ function show_invite(url) {
             modal.style.display = "none";
         }
     }
-    text.innerText = "Here is your invite link: \n";
+    text.innerText = `Here is your invite link for ${name}: \n`;
     text.inject(fixup_urls(url));
 
     let copy = new HTML('a', {href: 'javascript:void(0);'}, [
