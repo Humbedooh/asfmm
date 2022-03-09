@@ -24,7 +24,8 @@ import time
 import uuid
 """ Chat interface via WebSockets """
 
-WEBSOCKET_TIMEOUT = 15  # After 15 seconds of no activity, we consider someone signed out.
+WEBSOCKET_TIMEOUT = 10  # After 10 seconds of no activity, we consider someone signed out.
+
 
 async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
@@ -33,7 +34,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
             "success": False,
             "message": "Please authenticate first!",
         }
-    ws = aiohttp.web.WebSocketResponse()
+    ws = aiohttp.web.WebSocketResponse(timeout=WEBSOCKET_TIMEOUT)
     await ws.prepare(request)
     hashuid = uuid.uuid4()
     state.pending_messages[hashuid] = []
@@ -41,7 +42,9 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     if whoami in state.banned:  # If banned, break and don't send messages at all
         return {}
     try:
+        # Init some vars for tracking
         pongometer = 0
+        last_user_list = set()
         # All history first
         for room in state.rooms:
             await ws.send_json({
@@ -68,7 +71,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                     "realname": message["realname"],
                     "message": message["message"],
                 })
-        # now new pendings...
+        # Now iterate over any new incoming messages, as well as status updates
         while not ws.closed:
             if whoami in state.banned:  # If banned, break and don't send messages at all
                 return {}
@@ -84,13 +87,15 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                         "realname": message["realname"],
                         "message": message["message"],
                     })
-            else:
-                if pongometer % 25 == 0:
-                    state.attendees[cookie.state["credentials"]["login"]] = time.time()
-                    currently_attending = []
-                    for k, v in state.attendees.items():
-                        if v >= time.time() - WEBSOCKET_TIMEOUT:
-                            currently_attending.append(k)
+            state.attendees[whoami] = time.time()
+            if pongometer % 10 == 0:
+                currently_attending = set()
+                for k, v in state.attendees.items():
+                    if v >= time.time() - WEBSOCKET_TIMEOUT:
+                        currently_attending.add(k)
+                # If user list has changed, or we've waited 7.5 seconds, re-send user list and statuses
+                if last_user_list != currently_attending or pongometer % 30 == 0:
+                    last_user_list = currently_attending
                     statuses = {}
                     if cookie.state.get("admin"):
                         statuses = {
@@ -100,12 +105,12 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                     await ws.send_json({
                         "pong": str(uuid.uuid4()),
                         "statuses": statuses,
-                        "current": currently_attending,
+                        "current": list(currently_attending),
                         "attendees": len(currently_attending),
                         "max": len(state.attendees)}
                     )
-                pongometer += 1
-                await asyncio.sleep(0.2)
+            pongometer += 1
+            await asyncio.sleep(0.25)
     except asyncio.exceptions.CancelledError:
         pass
     del state.pending_messages[hashuid]
