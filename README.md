@@ -24,3 +24,8 @@ ProxyPass / http://localhost:8080/
 
 ### Resetting the history
 To reset the chat and quorum history, simply delete asfmm.sqlite and restart the service.
+
+
+## Acknowledgements:
+
+This project uses [moment.js](https://momentjs.com/) and [tribute](https://github.com/zurb/tribute) for its user interface. Many thanks for the cool features, people!
