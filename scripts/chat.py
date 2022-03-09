@@ -37,27 +37,45 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     await ws.prepare(request)
     hashuid = uuid.uuid4()
     state.pending_messages[hashuid] = []
+    whoami = cookie.state["credentials"]["login"]
+    if whoami in state.banned:  # If banned, break and don't send messages at all
+        return {}
     try:
+        pongometer = 0
+        # All history first
+        for room in state.rooms:
+            await ws.send_json({
+                "room_data": {
+                    "id": room.name,
+                    "title": room.title,
+                    "topic": room.topic,
+                }
+            })
+            await ws.send_json({
+                "msgid": str(uuid.uuid4()),
+                "timestamp": 0,
+                "channel": room.name,
+                "sender": "",
+                "realname": "",
+                "message": f"Welcome to the {room.name} channel. " + room.topic,
+            })
+            for message in room.messages:
+                await ws.send_json({
+                    "msgid": message["uid"],
+                    "timestamp": message["timestamp"],
+                    "channel": message["room"],
+                    "sender": message["sender"],
+                    "realname": message["realname"],
+                    "message": message["message"],
+                })
+        # now new pendings...
         while not ws.closed:
-            pongometer = 0
-            # All history first
-            for room in state.rooms:
-                await ws.send_json({
-                    "room_data": {
-                        "id": room.name,
-                        "title": room.title,
-                        "topic": room.topic,
-                    }
-                })
-                await ws.send_json({
-                    "msgid": str(uuid.uuid4()),
-                    "timestamp": 0,
-                    "channel": room.name,
-                    "sender": "",
-                    "realname": "",
-                    "message": f"Welcome to the {room.name} channel. " + room.topic,
-                })
-                for message in room.messages:
+            if whoami in state.banned:  # If banned, break and don't send messages at all
+                return {}
+            if len(state.pending_messages[hashuid]):
+                to_send = state.pending_messages[hashuid].copy()  # copy to prevent race condition
+                state.pending_messages[hashuid].clear()  # clear, so next iteration we only get new messages
+                for message in to_send:
                     await ws.send_json({
                         "msgid": message["uid"],
                         "timestamp": message["timestamp"],
@@ -66,33 +84,28 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                         "realname": message["realname"],
                         "message": message["message"],
                     })
-            # now new pendings...
-            while True:
-                whoami = cookie.state["credentials"]["login"]
-                if whoami in state.banned:  # If banned, break and don't send messages at all
-                    break
-                if len(state.pending_messages[hashuid]):
-                    to_send = state.pending_messages[hashuid].copy()  # copy to prevent race condition
-                    state.pending_messages[hashuid].clear()  # clear, so next iteration we only get new messages
-                    for message in to_send:
-                        await ws.send_json({
-                            "msgid": message["uid"],
-                            "timestamp": message["timestamp"],
-                            "channel": message["room"],
-                            "sender": message["sender"],
-                            "realname": message["realname"],
-                            "message": message["message"],
-                        })
-                else:
-                    if pongometer % 25 == 0:
-                        state.attendees[cookie.state["credentials"]["login"]] = time.time()
-                        currently_attending = []
-                        for k, v in state.attendees.items():
-                            if v >= time.time() - WEBSOCKET_TIMEOUT:
-                                currently_attending.append(k)
-                        await ws.send_json({"pong": str(uuid.uuid4()), "current": currently_attending, "attendees": len(currently_attending), "max": len(state.attendees)})
-                    pongometer += 1
-                    await asyncio.sleep(0.2)
+            else:
+                if pongometer % 25 == 0:
+                    state.attendees[cookie.state["credentials"]["login"]] = time.time()
+                    currently_attending = []
+                    for k, v in state.attendees.items():
+                        if v >= time.time() - WEBSOCKET_TIMEOUT:
+                            currently_attending.append(k)
+                    statuses = {}
+                    if cookie.state.get("admin"):
+                        statuses = {
+                            "blocked": state.blocked,
+                            "banned": state.banned,
+                        }
+                    await ws.send_json({
+                        "pong": str(uuid.uuid4()),
+                        "statuses": statuses,
+                        "current": currently_attending,
+                        "attendees": len(currently_attending),
+                        "max": len(state.attendees)}
+                    )
+                pongometer += 1
+                await asyncio.sleep(0.2)
     except asyncio.exceptions.CancelledError:
         pass
     del state.pending_messages[hashuid]
