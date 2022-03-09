@@ -287,6 +287,8 @@ let current_room = null;
 let notify_user = false;
 const URL_RE = new RegExp("(" + "(?:(?:[a-z]+)://)" + "(?:\\S+(?::\\S*)?@)?" + "(?:" + "([01][0-9][0-9]|2[0-4][0-9]|25[0-5])" + "|" + "(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" + "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" + "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" + "\\.?" + ")" + "(?::\\d{2,5})?" + "(?:[/?#]([^,<>()\\[\\] \\t\\r\\n]|(<[^:\\s]*?>|\\([^:\\s]*?\\)|\\[[^:\\s]*?\\]))*)?" + ")\\.?", "mi");
 let wscon = null;
+let tribute;
+let nicks = [];
 
 // Grabs credentials or goes to oauth screen
 async function get_preferences(formdata) {
@@ -383,20 +385,13 @@ function write_creds() {
         quorum.style.background = '#f5bbc6';
         quorum.innerText = `Quorum has NOT been reached yet. ${prefs.quorum.present.length} members present or assigned via proxy out of a required ${prefs.quorum.required}.`;
     }
-    let nicks = [];
+    nicks.splice(0,nicks.length);
     for (let nick of current_people) {
         nicks.push({
             key: '@' + nick,
             value: nick
         });
     }
-    // Tribute attachment
-    let tribute = new Tribute({
-        autocompleteMode: false,
-        values: nicks
-    });
-    tribute.attach(document.getElementById('mooosage'));
-
 }
 
 
@@ -713,4 +708,14 @@ if (notifydiv) {
         }
 
     });
+
+    // Tribute attachment
+    tribute = new Tribute({
+            autocompleteMode: false,
+            values: function (text, cb) {
+                cb(nicks);
+            }
+        }
+    );
+    tribute.attach(document.getElementById('mooosage'));
 }
