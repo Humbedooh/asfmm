@@ -196,6 +196,8 @@ footer {
 .line {
     min-height: 1.25rem;
     line-height: 1rem;
+    width: calc(98% - 4px);
+    margin: 2px;
     vertical-align: top;
     margin-bottom: 6px;
     border: 1px solid #0001;
@@ -210,6 +212,7 @@ footer {
 }
 
 .timestamp {
+    opacity: 75%;
     width: 180px;
     display: inline-block;
     height: 1.25rem;
@@ -224,13 +227,15 @@ footer {
  }
 
 .name {
+    opacity: 75%;
     width: 360px;
     display: inline-block;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     font-weight: bold;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    color: #006;
     padding: 3px;
     background-image: url(/images/user.png);
     background-size: 14px 16px;
@@ -240,13 +245,14 @@ footer {
 }
 
 .message {
-    width: 90%;
+    width: 100%;
     display: block;
     white-space: pre-wrap;
     position: relative;
     padding: 4px;
     font-size: 0.95rem;
     border-top: 1px solid #9991;
+    color: black;
 }
 
 
