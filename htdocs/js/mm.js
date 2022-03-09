@@ -383,6 +383,20 @@ function write_creds() {
         quorum.style.background = '#f5bbc6';
         quorum.innerText = `Quorum has NOT been reached yet. ${prefs.quorum.present.length} members present or assigned via proxy out of a required ${prefs.quorum.required}.`;
     }
+    let nicks = [];
+    for (let nick of current_people) {
+        nicks.push({
+            key: '@' + nick,
+            value: nick
+        });
+    }
+    // Tribute attachment
+    let tribute = new Tribute({
+        autocompleteMode: false,
+        values: nicks
+    });
+    tribute.attach(document.getElementById('mooosage'));
+
 }
 
 
@@ -611,6 +625,8 @@ async function chat() {
 
 
 function check_send(el, force=false) {
+    // Ignore if we're in the middle of a tribute selection
+    if (document.getElementsByClassName('tribute-container')[0].style.display != 'none') return
     if(force || event.key === 'Enter' && !event.shiftKey) {
         POST("/post", {
             room: current_room,
