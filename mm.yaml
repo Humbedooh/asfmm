@@ -12,3 +12,6 @@ channels:
     topic: "Chat away here!"
 admins:
   - testdooh
+
+quorum:
+  json_url: "https://whimsy.apache.org/public/member-info.json"
