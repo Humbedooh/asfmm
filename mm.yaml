@@ -15,3 +15,5 @@ admins:
 
 quorum:
   json_url: "https://whimsy.apache.org/public/member-info.json"
+
+message_rate_limit: 5

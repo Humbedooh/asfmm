@@ -17,6 +17,7 @@
 
 import ahapi
 import typing
+import time
 
 """Post end point for MM"""
 
@@ -37,7 +38,17 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
         }
     for room in state.rooms:
         if room.name == roomname:
+            throttle_max = state.config.get("message_rate_limit", 5)
+            if len(room.flood_control) >= throttle_max and room.flood_control[-throttle_max] >= time.time()-1:
+                return {
+                    "success": False,
+                    "message": "The chat is experiencing a large influx of messages and have been throttled. Please try again.",
+                }
             room.add_message(sender, realname, message)
+            # Add the timestamp of this message to flood control list
+            room.flood_control.append(time.time())
+            if len(room.flood_control) > 50:
+                room.flood_control.pop(0)
             return {
                 "success": True,
                 "message": "Message sent!",

@@ -53,6 +53,7 @@ class ChatRoom:
         self.title = title
         self.topic = topic
         self.audit = []
+        self.flood_control = []  # Manages flood throttling by keeping timestamps of the last N messages
         self.messages = [x for x in self.state.db.fetch("messages", limit=0, room=name)]
         print(f"Fetched {len(self.messages)} message(s) from channel #{name}")
 
