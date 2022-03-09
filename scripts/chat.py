@@ -57,16 +57,6 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                     }
                 }
             )
-            await ws.send_json(
-                {
-                    "msgid": str(uuid.uuid4()),
-                    "timestamp": 0,
-                    "channel": room.name,
-                    "sender": "",
-                    "realname": "",
-                    "message": f"Welcome to the {room.name} channel. " + room.topic,
-                }
-            )
             for message in room.messages:
                 await ws.send_json(
                     {
