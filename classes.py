@@ -74,17 +74,20 @@ class ChatRoom:
 
 
 class Quorum:
+    """Class for keeping persistent score of quorum"""
     def __init__(self, db: asfpy.sqlite.DB):
         self.db = db
+        # Check and create table if not present
         if not self.db.table_exists("quorum"):
             print("Creating DB table for quorum")
             self.db.runc(DB_CREATE_QUORUM)
+        # Fetch persistent records
         self.members = set([x["name"] for x in self.db.fetch("quorum", limit=0)])
 
     def add(self, member: str):
         if member and member not in self.members:
-            self.members.add(member)
-            self.db.insert("quorum", {"name": member})
+            self.members.add(member)  # Add in memory
+            self.db.insert("quorum", {"name": member})  # Add to persistent DB
 
 
 class State:
