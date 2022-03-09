@@ -63,6 +63,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                             "provider": "Apache OAuth",
                         },
                         "pending_messages": messages,
+                        "admin": response["uid"] in state.config["admins"],
                     }
                     return redirect("/")
     elif provider == "guest":
@@ -78,6 +79,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                     "name": state.invites[code]["name"],
                     "provider": "Invite Code",
                 },
+                "admin": False,
                 "pending_messages": [],
             }
             del state.invites[code]

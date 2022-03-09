@@ -28,7 +28,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     if not cookie or not cookie.state:
         return {"success": False, "message": "Oops, something went terribly wrong here!"}
 
-    if not cookie.state["credentials"]["login"] in state.config["admins"]:
+    if not cookie.state.get("admin"):
         return {"success": False, "message": "You need administrative powers for this..."}
     action = formdata.get("action")
     if action == "block":
@@ -63,7 +63,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
             "success": True,
             "message": f"User {who} unbanned",
         }
-    
+
 
 def register(state: typing.Any):
     return ahapi.endpoint(process)

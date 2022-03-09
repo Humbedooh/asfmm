@@ -37,6 +37,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
         return redirect()
     return {
         "credentials": cookie.state.get("credentials"),
+        "admin": cookie.state.get("admin"),
     }
 
 
