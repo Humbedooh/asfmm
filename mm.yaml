@@ -11,10 +11,10 @@ oauth:
 channels:
   asfmembers:
     name: "ASF Members Meeting"
-    topic: "Official channel for the annual members meeting"
+    topic: "Official channel for the annual members meeting. You do NOT need to announce yourself in this channel."
   backchannel:
     name: "Back-channel"
-    topic: "Chat away here!"
+    topic: "Chat with other members and guests about whatever you want."
 
 # A list of users with administrative powers (can mute and ban others)
 admins:
