@@ -22,6 +22,7 @@ import uuid
 import asyncio
 import time
 import uuid
+import math
 
 """ Chat interface via WebSockets """
 
@@ -118,6 +119,10 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                             "current": list(currently_attending),
                             "attendees": len(currently_attending),
                             "max": len(state.attendees),
+                            "quorum": {
+                                "required": math.ceil(len(state.members)/3),
+                                "present": list(state.quorum),
+                            }
                         }
                     )
             pongometer += 1

@@ -481,6 +481,7 @@ function write_creds() {
     // non-guests can invite others
     if (!prefs.credentials.login.startsWith("guest")) {
         document.getElementById('invite').style.display = 'block';
+        document.getElementById('assign_proxies').style.display = 'block';
     }
 }
 
@@ -565,6 +566,44 @@ function show_invite(url, name) {
         window.setTimeout(() => { cpnot.parentNode.removeChild(cpnot)}, 1000);
     });
     text.inject(copy);
+}
+
+function assign_proxies() {
+    let modal = document.getElementById("modal");
+    let span = document.getElementsByClassName("close")[0];
+    let text = document.getElementById('modal_text');
+    modal.style.display = "block";
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    text.innerText = "Please paste your proxies into the area below and click 'submit':";
+    text.inject(new HTML('br'));
+    let txt = new HTML('textarea', {id: 'proxies'});
+    txt.style.height = '300px';
+    text.inject(txt)
+    let btn = new HTML('button', {onclick: 'send_proxies();'}, 'Submit');
+    text.inject(new HTML('br'));
+    text.inject(btn);
+}
+
+
+async function send_proxies() {
+    let modal = document.getElementById("modal");
+    let proxies = [];
+    for (let line of document.getElementById('proxies').value.split(/\r?\n/)) {
+        let asfid = line.split(/\s/)[0];
+        proxies.push(asfid);
+    }
+    const resp = await POST("/proxy", {
+        members: proxies
+    });
+    alert(resp.message);
+    modal.style.display = 'none';
 }
 
 
@@ -667,6 +706,7 @@ async function chat() {
             current_people = js.current;
             current_people.sort((a, b) => a.localeCompare(b));
             prefs.statuses = js.statuses;
+            prefs.quorum = js.quorum;
             write_creds();
         }
     });
