@@ -546,8 +546,22 @@ function show_invite(url) {
             modal.style.display = "none";
         }
     }
-    text.innerText = "Here is your invite link: ";
+    text.innerText = "Here is your invite link: \n";
     text.inject(fixup_urls(url));
+
+    let copy = new HTML('a', {href: 'javascript:void(0);'}, [
+        new HTML('img', {src: '/images/clipboard.png', align: 'absmiddle'}),
+        'Copy to clipboard'
+    ]);
+    copy.style.marginLeft = '8px';
+    copy.addEventListener('click', () => {
+        navigator.clipboard.writeText(url);
+        let cpnot = new HTML('div', {id: 'cpnotif'}, "Copied to clipboard!");
+        document.body.appendChild(cpnot);
+        window.setTimeout(() => { cpnot.style.opacity = '0'}, 50);
+        window.setTimeout(() => { cpnot.parentNode.removeChild(cpnot)}, 1000);
+    });
+    text.inject(copy);
 }
 
 
@@ -570,6 +584,7 @@ async function chat() {
         alert("Connection was lost, reloading..!");
         location.reload();
     });
+
     window.onbeforeunload = function() {
         wscon.close();
         console.log("Closing chat...");
