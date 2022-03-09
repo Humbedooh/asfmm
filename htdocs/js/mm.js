@@ -111,119 +111,6 @@ function fixup_urls(splicer) {
     return textbits;
 }
 
-/**
- * String formatting prototype
- * A'la printf
- */
-
-String.prototype.format = function() {
-    let args = arguments;
-    let n = 0;
-    let t = this;
-    let rtn = this.replace(/(?!%)?%([-+]*)([0-9.]*)([a-zA-Z])/g, function(m, pm, len, fmt) {
-        len = parseInt(len || '1');
-        // We need the correct number of args, balk otherwise, using ourselves to format the error!
-        if (args.length <= n) {
-            let err = "Error interpolating string '%s': Expected at least %u argments, only got %u!".format(t, n + 1, args.length);
-            console.log(err);
-            throw err;
-        }
-        let varg = args[n];
-        n++;
-        switch (fmt) {
-            case 's':
-                if (typeof(varg) == 'function') {
-                    varg = '(function)';
-                }
-                return varg;
-            // For now, let u, d and i do the same thing
-            case 'd':
-            case 'i':
-            case 'u':
-                varg = parseInt(varg).pad(len); // truncate to Integer, pad if needed
-                return varg;
-        }
-    });
-    return rtn;
-};
-
-
-/**
- * Number prettification prototype:
- * Converts 1234567 into 1,234,567 etc
- */
-
-Number.prototype.pretty = function(fix) {
-    if (fix) {
-        return String(this.toFixed(fix)).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
-    }
-    return String(this.toFixed(0)).replace(/(\d)(?=(\d{3})+$)/g, '$1,');
-};
-
-
-/**
- * Number padding
- * usage: 123.pad(6) -> 000123
- */
-
-Number.prototype.pad = function(n) {
-    let str = String(this);
-
-    /* Do we need to pad? if so, do it using String.repeat */
-    if (str.length < n) {
-        str = "0".repeat(n - str.length) + str;
-    }
-    return str;
-};
-
-/* Func for converting TZ offset from minutes to +/-HHMM */
-
-Date.prototype.TZ_HHMM = function() {
-    let off_mins = this.getTimezoneOffset();
-    let off_hh =   Math.floor(Math.abs(off_mins/60));
-    let off_mm =   Math.abs(off_mins%60);
-    let sgn = off_mins > 0 ? '-' : '+';
-    return sgn + off_hh.pad(2) + ':' + off_mm.pad(2);
-};
-
-
-
-/* Func for converting a date to YYYY-MM-DD HH:MM TZ */
-
-Date.prototype.ISOBare = function() {
-    let M, O, d, h, m, y;
-    if (prefs.UTC === true) {
-        y = this.getUTCFullYear();
-        m = (this.getUTCMonth() + 1).pad(2);
-        d = this.getUTCDate().pad(2);
-        h = this.getUTCHours().pad(2);
-        M = this.getUTCMinutes().pad(2);
-        O = 'UTC';
-    } else {
-        y = this.getFullYear();
-        m = (this.getMonth() + 1).pad(2);
-        d = this.getDate().pad(2);
-        h = this.getHours().pad(2);
-        M = this.getMinutes().pad(2);
-        O = this.TZ_HHMM();
-    }
-    return y + "-" + m + "-" + d + " " + h + ":" + M + " " + O;
-};
-
-
-/* isArray: function to detect if an object is an array */
-
-function isArray(value) {
-    return value && typeof value === 'object' && value instanceof Array && typeof value.length === 'number' && typeof value.splice === 'function' && !(value.propertyIsEnumerable('length'));
-}
-
-
-/* isHash: function to detect if an object is a hash */
-
-function isHash(value) {
-    return value && typeof value === 'object' && !isArray(value);
-}
-
 
 /* Remove an array element by value */
 
@@ -250,14 +137,15 @@ Array.prototype.has = function(val) {
     return false;
 };
 
-function isEmpty(obj) {
-    return (
-        obj &&
-        Object.keys(obj).length === 0 &&
-        Object.getPrototypeOf(obj) === Object.prototype
-    );
+/* Determine if object is an array */
+function isArray(value) {
+    return value && typeof value === 'object' && value instanceof Array && typeof value.length === 'number' && typeof value.splice === 'function' && !(value.propertyIsEnumerable('length'));
 }
 
+/* Determine if object is a hash */
+function isHash(value) {
+    return value && typeof value === 'object' && !isArray(value);
+}
 
 /**
  * HTML: DOM creator class
@@ -423,7 +311,7 @@ async function get_preferences(formdata) {
 }
 
 function notify(room, sender, message) {
-    var notification = new Notification(`${sender} (#${room}): ${message}`);
+    new Notification(`${sender} (#${room}): ${message}`);
 }
 
 // OAuth gateway function
@@ -438,7 +326,7 @@ async function oauth_gate(func) {
 // Top bar status writer
 function write_creds() {
     const creds = document.getElementById('credentials');
-    if (creds) creds.innerText = `Logged in as ${prefs.credentials.name} (via ${prefs.credentials.provider}). Currently ${attendees} attending (total attendance this meeeting: ${max_people}). `;
+    if (creds) creds.innerText = `Logged in as ${prefs.credentials.name} (${prefs.credentials.login}, via ${prefs.credentials.provider}). Currently ${attendees} attending (total attendance this meeeting: ${max_people}). `;
     let logout_link = document.createElement('a');
     logout_link.href = "/preferences?logout=true";
     logout_link.innerText = "Sign out";
@@ -497,6 +385,8 @@ function write_creds() {
     }
 }
 
+
+// mgmt functions
 async function block_user(who) {
     const resp = await POST("/mgmt", {
         action: 'block',
@@ -620,12 +510,11 @@ async function send_proxies() {
 
 
 async function main() {
-    const main = document.getElementById('main');
     write_creds();
     await chat();
 }
 
-
+// chat loop
 async function chat() {
     const prot = (location.protocol == 'https:') ? 'wss://' : 'ws://';
     wscon = new WebSocket(prot + location.hostname + '/chat');
@@ -662,11 +551,13 @@ async function chat() {
                 document.getElementById('main').appendChild(channeldiv);
                 if (js.channel != current_room) channeldiv.style.display = 'none';
             }
-            const now = new Date(js.timestamp * 1000.0).ISOBare();
+            const now = moment(js.timestamp * 1000.0).fromNow();
             let messagediv = new HTML('div', {class: 'message'});
-            let datediv = new HTML('div', {class: 'timestamp'}, `[${now}]`);
+            let datediv = new HTML('div', {class: 'timestamp', tz: js.timestamp*1000.0}, now);
+            // Update timestamp every 30-40 seconds..ish. Random distribution of load
+            window.setInterval(() => datediv.innerText = moment(parseFloat(datediv.getAttribute('tz'))).fromNow(), 30000 + (Math.random()*10000));
             datediv.title = new Date(js.timestamp * 1000.0).toString();
-            let namediv = new HTML('div', {class: 'name'}, `${js.realname} (${js.sender}): `);
+            let namediv = new HTML('div', {class: 'name'}, `${js.realname} (${js.sender})`);
             namediv.title = namediv.innerText;
             if (js.timestamp == 0) {
                 datediv.innerText = '';
@@ -691,8 +582,8 @@ async function chat() {
                 messagediv.style.color = 'purple';
             }
             let linediv = new HTML('div', {class: 'line'});
-            linediv.inject(datediv);
             linediv.inject(namediv);
+            linediv.inject(datediv);
             linediv.inject(messagediv);
             channeldiv.inject(linediv);
             channeldiv.scrollTo(0, channeldiv.scrollHeight);
