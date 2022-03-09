@@ -110,7 +110,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                             "max": len(state.attendees),
                             "quorum": {
                                 "required": math.ceil(len(state.members)/3),
-                                "present": list(state.quorum),
+                                "present": list(state.quorum.members),
                             }
                         }
                     )

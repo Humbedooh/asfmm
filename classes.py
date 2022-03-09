@@ -37,6 +37,12 @@ CREATE TABLE "messages" (
 );
 """
 
+DB_CREATE_QUORUM = """
+CREATE TABLE "quorum" (
+    "name" TEXT NOT NULL
+);
+"""
+
 
 class ChatRoom:
     """A chat room with metadata and messages"""
@@ -66,6 +72,20 @@ class ChatRoom:
             messages.append(message)
 
 
+class Quorum:
+    def __init__(self, db: asfpy.sqlite.DB):
+        self.db = db
+        if not self.db.table_exists("quorum"):
+            print("Creating DB table for quorum")
+            self.db.runc(DB_CREATE_QUORUM)
+        self.members = set([x["name"] for x in self.db.fetch("quorum", limit=0)])
+
+    def add(self, member: str):
+        if member and member not in self.members:
+            self.members.add(member)
+            self.db.insert("quorum", {"name": member})
+
+
 class State:
     """Global state object for operations"""
 
@@ -78,12 +98,15 @@ class State:
         self.quorum: set = set()
         self.invites: dict = {}
         db_name = self.config["database"]
+        print(f"Opening database {db_name}")
         self.db: asfpy.sqlite.DB = asfpy.sqlite.DB(db_name)
         self.blocked: list = []
         self.banned: list = []
         self.members = requests.get(self.config["quorum"]["json_url"]).json()['members']
+        self.quorum = Quorum(self.db)
 
-        print(f"Opening database {db_name}")
+        print(f"Loaded {len(self.quorum.members)} attendees from quorum table")
+
         if not self.db.table_exists("messages"):
             print("Creating DB table for messages")
             self.db.runc(DB_CREATE_MESSAGES)

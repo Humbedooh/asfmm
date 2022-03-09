@@ -38,7 +38,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     tar = tarfile.open(mode="w:gz", fileobj=out)
 
     # Export attendance
-    attendance = "\n".join(state.quorum).encode('utf-8')
+    attendance = "\n".join(state.quorum.members).encode('utf-8')
     file = io.BytesIO(attendance)
     info = tarfile.TarInfo(name="attendance.txt")
     info.size = len(attendance)
