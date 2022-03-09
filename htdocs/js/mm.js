@@ -492,7 +492,9 @@ function assign_proxies() {
             modal.style.display = "none";
         }
     }
-    text.innerText = "This form allows you to assign yourself as proxy for other members.\nIf one or more members have assigned you as a proxy for this meeting, \nplease enter their ASF ID(s) below, one per line:";
+    text.innerText = "This form allows you to act as proxy for other members. If one or more members have asked you to proxy them, please enter their ASF ID(s) below, one per line. You can fetch a list of members you are proxying at: ";
+    text.inject(new HTML('a', {href: 'https://whimsy.apache.org/members/proxy.cgi', target: '_blank'}, 'https://whimsy.apache.org/members/proxy.cgi'))
+    text.inject(new HTML('br'));
     text.inject(new HTML('br'));
     let txt = new HTML('textarea', {id: 'proxies'});
     txt.style.height = '300px';
