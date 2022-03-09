@@ -9,7 +9,7 @@ ASF Members Meeting Web Chat Service
 - Run the server: `python3 main.py`
 
 ### mod_proxy_ws setup for HTTPS support
-If you're using httpd as an TLS terminator, you will need to enable mod_proxy_ws and have the following configuration snippet in your VirtualHost stanza:
+If you're using httpd as an TLS terminator, you will need to enable both `mod_proxy` and `mod_proxy_wstunnel` and have the following configuration snippet in your VirtualHost stanza:
 
 ~~~apache
 ProxyPass /chat ws://localhost:8080/chat
