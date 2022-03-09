@@ -1,8 +1,13 @@
+# The SQLite database used for persistent storage
 database: asfmm.sqlite
+
+# OAuth setup
 oauth:
   asf:
     callback_url:  "https://localhost.apache.org/oauth?provider=asf&step=callback"
     invite_url: "https://localhost.apache.org/?action=invite&code="
+
+# This is the general list of channels that will be available to users during the meeting.
 channels:
   asfmembers:
     name: "ASF Members Meeting"
@@ -10,10 +15,15 @@ channels:
   backchannel:
     name: "Back-channel"
     topic: "Chat away here!"
+
+# A list of users with administrative powers (can mute and ban others)
 admins:
   - testdooh
 
+# This is the JSON feed for the members list, used for calculating quorum and assigning proxies
 quorum:
   json_url: "https://whimsy.apache.org/public/member-info.json"
 
+# This controls message flood throttling. The value represents the maximum number of messages
+# that can be sent to a given channel per second. Must be between 1 and 50.
 message_rate_limit: 5
