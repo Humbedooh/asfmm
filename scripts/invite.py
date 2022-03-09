@@ -26,10 +26,10 @@ import time
 async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
     invitee = formdata.get("name")
-    if not cookie or not invitee:
+    sender = cookie.state["credentials"]["login"]
+    if not cookie or not invitee or sender.startswith("guest_"):
         return {"success": False, "message": "Oops, something went terribly wrong here!"}
 
-    sender = cookie.state["credentials"]["login"]
     realname = cookie.state["credentials"]["name"]
 
     invite_id = str(uuid.uuid4())
