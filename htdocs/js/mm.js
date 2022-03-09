@@ -593,7 +593,7 @@ function assign_proxies() {
             modal.style.display = "none";
         }
     }
-    text.innerText = "Please paste your proxies into the area below and click 'submit':";
+    text.innerText = "This form allows you to assign yourself as proxy for other members.\nIf one or more members have assigned you as a proxy for this meeting, \nplease enter their ASF ID(s) below, one per line:";
     text.inject(new HTML('br'));
     let txt = new HTML('textarea', {id: 'proxies'});
     txt.style.height = '300px';

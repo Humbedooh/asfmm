@@ -31,15 +31,23 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
         return {"success": False, "message": "Guests cannot assign proxies"}
 
     assigned = 0
+    invalid = 0
     for member in formdata.get("members"):
         if member and member in state.members:
             state.quorum.add(member)
             assigned += 1
-
-    return {
-        "success": True,
-        "message": f"{assigned} proxies assigned to you."
-    }
+        elif member:
+            invalid += 1
+    if not invalid:
+        return {
+            "success": True,
+            "message": f"{assigned} proxies assigned to you."
+        }
+    else:
+        return {
+            "success": True,
+            "message": f"{assigned} proxies assigned to you. {invalid} proxies were invalid or already assigned."
+        }
 
 
 def register(state: typing.Any):
