@@ -164,7 +164,7 @@ footer {
 
 
 .channel {
-    width: calc(90% - 300px);
+    width: calc(100% - 300px);
     height: 500px;
     background: white;
     border-radius: 4px;
@@ -223,7 +223,7 @@ footer {
 #counter {
     display: inline-block;
     background-color: aliceblue;
-    width: 250px;
+    width: 280px;
     max-height: 100%;
     vertical-align: top;
     position: relative;
@@ -233,7 +233,7 @@ footer {
 
 
 #main {
-    max-width: 90%;
+    max-width: 95%;
     margin: 0 auto;
     min-height: 400px;
 }
