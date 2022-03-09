@@ -621,7 +621,9 @@ async function chat() {
 
 function check_send(el, force=false) {
     // Ignore if we're in the middle of a tribute selection
-    if (document.getElementsByClassName('tribute-container')[0].style.display != 'none') return
+    if (document.getElementsByClassName('tribute-container').length && document.getElementsByClassName('tribute-container')[0].style.display != 'none') {
+        return
+    }
     if(force || event.key === 'Enter' && !event.shiftKey) {
         POST("/post", {
             room: current_room,
