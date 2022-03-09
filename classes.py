@@ -23,7 +23,7 @@ import asfpy.sqlite
 import uuid
 import yaml
 import ahapi.session
-
+import requests
 
 DB_CREATE_MESSAGES = """
 CREATE TABLE "messages" (
@@ -40,6 +40,7 @@ CREATE TABLE "messages" (
 
 class ChatRoom:
     """A chat room with metadata and messages"""
+
     def __init__(self, state, name, title, topic):
         self.state: State = state
         self.name = name
@@ -57,7 +58,7 @@ class ChatRoom:
             "room": self.name,
             "sender": sender,
             "realname": realname,
-            "message": message
+            "message": message,
         }
         self.state.db.insert("messages", message)
         self.messages.append(message)
@@ -67,17 +68,20 @@ class ChatRoom:
 
 class State:
     """Global state object for operations"""
+
     def __init__(self):
         self.config: dict = yaml.safe_load(open("mm.yaml"))
         self.cookies: typing.Optional[ahapi.session.CookieFactory] = None
         self.rooms: list = []
         self.pending_messages: dict = {}
         self.attendees: dict = {}
+        self.quorum: set = set()
         self.invites: dict = {}
         db_name = self.config["database"]
         self.db: asfpy.sqlite.DB = asfpy.sqlite.DB(db_name)
         self.blocked: list = []
         self.banned: list = []
+        self.members = requests.get(self.config["quorum"]["json_url"]).json()['members']
 
         print(f"Opening database {db_name}")
         if not self.db.table_exists("messages"):
@@ -86,4 +90,3 @@ class State:
 
         for room, data in self.config["channels"].items():
             self.rooms.append(ChatRoom(self, room, data["name"], data["topic"]))
-
