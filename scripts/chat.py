@@ -18,7 +18,6 @@
 import ahapi
 import typing
 import aiohttp.web
-import uuid
 import asyncio
 import time
 import uuid
