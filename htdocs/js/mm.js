@@ -627,14 +627,16 @@ function mkchannel(chan) {
         channeldiv = document.createElement('div');
         channeldiv.setAttribute('id', 'channel_' + chan);
         channeldiv.setAttribute('class', 'channel');
-        document.getElementById('main').appendChild(channeldiv);
         if (chan != current_room) channeldiv.style.display = 'none';
         let topic = '';
         for (let channel of rooms) {
-            if (channel.id == chan) topic = channel.topic;
+            if (channel.id == chan) topic = `#${channel.id} (${channel.title}): ${channel.topic}`;
         }
-        let topicdiv = new HTML('div', {class: 'topic'}, topic);
-        channeldiv.inject(topicdiv);
+
+        let topicdiv = new HTML('div', {class: 'topic', id: 'topic_' + chan}, topic);
+        topicdiv.style.display = 'none';
+        document.getElementById('channels').appendChild(topicdiv);
+        document.getElementById('channels').appendChild(channeldiv);
         return channeldiv
     }
 }
@@ -642,12 +644,18 @@ function mkchannel(chan) {
 
 function show_channel(chan) {
     let chandiv = document.getElementById('channel_' + current_room);
-    if (chandiv) chandiv.style.display = 'none';
+    let topicdiv = document.getElementById('topic_' + current_room);
+    if (chandiv) {
+        chandiv.style.display = 'none';
+        topicdiv.style.display = 'none';
+    }
 
     current_room = chan;
     chandiv = document.getElementById('channel_' + chan);
     if (!chandiv) chandiv = mkchannel(chan);
+    topicdiv = document.getElementById('topic_' + chan);
     chandiv.style.display = 'inline-block';
+    topicdiv.style.display = 'inline-block';
     chandiv.scrollTo(0, chandiv.scrollHeight);
 
     let chanpicker = document.getElementById('chanpicker');
@@ -670,7 +678,6 @@ function show_channel(chan) {
             unreads.innerText = '';
         }
     }
-
 }
 
 // Enable/disable notifications for nick mentions
