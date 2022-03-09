@@ -324,3 +324,24 @@ input[type="button"] {
     text-align:center;
     transition: opacity 1200ms;
 }
+
+
+.label {
+    border-radius: 50%;
+    min-width: 16px;
+    display: inline-block;
+    margin-top: -4px;
+    margin-left: 12px;
+    color: white;
+    background-color: #2e73b7;
+    text-align: center;
+    font-size: 12px;
+    padding: 3px;
+    border: 2px solid white;
+    height: 16px;
+}
+
+li > span:empty {
+    border: none;
+    background-color: #0000;
+}

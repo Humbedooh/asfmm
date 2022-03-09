@@ -653,7 +653,7 @@ async function chat() {
                     if (room.id == js.channel && js.timestamp) {
                         room.unread++;
                         let urdiv = document.getElementById('unread_' + room.id);
-                        urdiv.innerText = ` (${room.unread})`;
+                        urdiv.innerText = room.unread;
                     }
                 }
             }
@@ -703,9 +703,9 @@ function show_channel(chan) {
         let a = new HTML('a', { href: "javascript:void(show_channel('" + room.id + "'))"});
         a.appendChild(li);
         li.innerText = room.title;
-        let unreads = new HTML('span');
+        let unreads = new HTML('span', {class: 'label'});
         unreads.setAttribute('id', 'unread_' + room.id);
-        if (room.unread) unreads.innerText = ` (${room.unread})`;
+        if (room.unread) unreads.innerText = room.unread;
         li.appendChild(unreads);
         chanpicker.appendChild(a);
         if (room.id != current_room) {
