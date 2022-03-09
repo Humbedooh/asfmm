@@ -48,7 +48,8 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     for room in state.rooms:
         logfile = ""
         for message in room.messages:
-            logfile += f"[{time.ctime(message['timestamp'])}] {message['realname']} ({message['sender']}): {message['message']}\n"
+            for line in message["message"].split("\n"):
+                logfile += f"[{time.ctime(message['timestamp'])}] {message['realname']} ({message['sender']}): {line}\n"
         logfile = logfile.encode('utf-8')
         file = io.BytesIO(logfile)
         info = tarfile.TarInfo(name=f"chat-{room.name}.txt")
