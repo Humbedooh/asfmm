@@ -695,6 +695,7 @@ function show_channel(chan) {
         document.getElementById('main').appendChild(chandiv);
     }
     chandiv.style.display = 'inline-block';
+    chandiv.scrollTo(0, chandiv.scrollHeight);
 
     let chanpicker = document.getElementById('chanpicker');
     chanpicker.innerText = '';
