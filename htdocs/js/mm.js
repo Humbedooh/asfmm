@@ -550,7 +550,8 @@ function show_invite(url, name) {
     }
     text.innerText = `Here is your invite link for ${name}: \n`;
     text.inject(fixup_urls(url));
-
+    text.inject(new HTML('br'));
+    text.inject(new HTML('br'));
     let copy = new HTML('a', {href: 'javascript:void(0);'}, [
         new HTML('img', {src: '/images/clipboard.png', align: 'absmiddle'}),
         'Copy to clipboard'

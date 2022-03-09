@@ -292,6 +292,7 @@ input[type="button"] {
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
+    max-width: 760px;
 }
 .close {
     color: #aaa;
