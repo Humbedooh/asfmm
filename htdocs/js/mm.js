@@ -449,7 +449,7 @@ function write_creds() {
     let userlist = document.getElementById('userlist');
     userlist.innerText = '';
     if (prefs.admin) {
-        userlist.parentNode.style.width = "280px";
+        document.getElementById('sidebar').style.width = '290px';
     }
     for (let user of current_people) {
         let udiv = new HTML('li', {}, user);
