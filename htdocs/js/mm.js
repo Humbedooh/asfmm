@@ -483,6 +483,18 @@ function write_creds() {
         document.getElementById('invite').style.display = 'block';
         document.getElementById('assign_proxies').style.display = 'block';
     }
+
+    if (prefs.quorum && prefs.quorum.present.length > prefs.quorum.required) {
+        let quorum = document.getElementById('quorum');
+        quorum.style.display = 'block';
+        quorum.style.background = '#c5f5bb';
+        quorum.innerText = `Quorum has been reached. ${prefs.quorum.present.length} members present or assigned via proxy out of a required ${prefs.quorum.required}.`;
+    } else if (prefs.quorum) {
+        let quorum = document.getElementById('quorum');
+        quorum.style.display = 'block';
+        quorum.style.background = '#f5bbc6';
+        quorum.innerText = `Quorum has NOT been reached yet. ${prefs.quorum.present.length} members present or assigned via proxy out of a required ${prefs.quorum.required}.`;
+    }
 }
 
 async function block_user(who) {

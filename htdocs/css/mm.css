@@ -75,6 +75,18 @@ input[type="text"]:focus, textarea:focus {
     margin-bottom: 16px;
 }
 
+
+#quorum {
+    font-size: 0.9rem;
+    text-align: center;
+    background-color: #c5f5bb;
+    border-radius: 5px;
+    padding: 3px;
+    margin: 4px;
+    margin-bottom: 16px;
+    display: none;
+}
+
 footer {
     font-size: 0.8rem;
     text-align: center;
