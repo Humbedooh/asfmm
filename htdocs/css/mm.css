@@ -184,6 +184,7 @@ footer {
     height: 500px;
     display: inline-block;
     vertical-align: top;
+    margin-bottom: 25px;
 }
 
 .channel {
