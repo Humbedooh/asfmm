@@ -444,6 +444,8 @@ function write_creds() {
     logout_link.innerText = "Sign out";
     creds.appendChild(logout_link);
 
+    let counter = document.getElementById('counter');
+    counter.innerText = current_people.length;
     let userlist = document.getElementById('userlist');
     userlist.innerText = '';
     if (prefs.admin) {
