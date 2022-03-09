@@ -164,7 +164,7 @@ footer {
 
 
 .channel {
-    width: calc(100% - 300px);
+    width: calc(100% - 310px);
     height: 500px;
     background: white;
     border-radius: 4px;
@@ -220,15 +220,34 @@ footer {
 }
 
 
-#counter {
+#userlist_wrapper {
     display: inline-block;
     background-color: aliceblue;
-    width: 280px;
-    max-height: 100%;
+    width: 200px;
+    max-height: 500px;
+    min-height: 500px;
+    padding: 4px;
     vertical-align: top;
     position: relative;
     margin-top: 30px;
     overflow-y: scroll;
+}
+
+#userlist_wrapper h1 {
+    font-size: 1rem;
+    margin: 0px;
+}
+
+#userlist {
+    font-size: 0.875rem;
+    margin-top: 0px;
+    margin-left: 8px;
+    padding: 12px;
+    list-style: url(/images/user.png);
+}
+
+#userlist li:nth-child(odd) {
+    background-color: #00000006;
 }
 
 
@@ -236,6 +255,7 @@ footer {
     max-width: 95%;
     margin: 0 auto;
     min-height: 400px;
+    position: relative;
 }
 
 

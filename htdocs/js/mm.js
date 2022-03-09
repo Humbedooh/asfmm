@@ -444,10 +444,13 @@ function write_creds() {
     logout_link.innerText = "Sign out";
     creds.appendChild(logout_link);
 
-    let userlist = document.getElementById('counter');
+    let userlist = document.getElementById('userlist');
     userlist.innerText = '';
+    if (prefs.admin) {
+        userlist.parentNode.style.width = "280px";
+    }
     for (let user of current_people) {
-        let udiv = new HTML('div', {}, user);
+        let udiv = new HTML('li', {}, user);
         if (prefs.admin) {
             // muted user
             if (prefs.statuses.blocked.has(user)) {
@@ -599,6 +602,8 @@ async function chat() {
             if (js.timestamp == 0) {
                 datediv.innerText = '';
                 namediv.innerText = '';
+                messagediv.style.color = 'navy';
+                messagediv.style.fontWeight = 'bold';
             }
 
             let is_action = false;
