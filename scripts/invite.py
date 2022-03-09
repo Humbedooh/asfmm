@@ -37,7 +37,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
         "timestamp": time.time(),
         "inviter": sender,
         "inviter_name": realname,
-        "name": invitee,
+        "name": f"{invitee} (Guest)",
     }
     return {
         "success": True,
