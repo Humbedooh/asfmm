@@ -59,6 +59,8 @@ class ChatRoom:
 
     def add_message(self, sender, realname, message):
         """Adds a message to the chat room, sending it to all websocket subscribers"""
+        if not message:
+            return  # Don't need blank lines!
         message = {
             "timestamp": time.time(),
             "uid": str(uuid.uuid4()),
