@@ -276,6 +276,7 @@ input[type="button"] {
     vertical-align: top;
     text-decoration: none;
     cursor: pointer;
+    display: inline-block !important;
 }
 
 .modal {
