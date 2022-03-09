@@ -619,18 +619,24 @@ async function chat() {
 }
 
 
-function check_send(el, force=false) {
+async function check_send(el, force=false) {
     // Ignore if we're in the middle of a tribute selection
     if (document.getElementsByClassName('tribute-container').length && document.getElementsByClassName('tribute-container')[0].style.display != 'none') {
         return
     }
     if(force || event.key === 'Enter' && !event.shiftKey) {
-        POST("/post", {
-            room: current_room,
-            message: el.value
-        });
-        el.value = '';
         event.preventDefault();
+        const message = el.value;
+        el.value = '';
+        let resp = await POST("/post", {
+            room: current_room,
+            message: message
+        });
+        if (resp.success) {
+        } else {
+            el.value = message;
+            alert(resp.message);
+        }
     }
 }
 
