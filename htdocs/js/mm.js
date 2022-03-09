@@ -515,8 +515,8 @@ async function send_proxies() {
     const resp = await POST("/proxy", {
         members: proxies
     });
-    alert(resp.message);
-    modal.style.display = 'none';
+    let text = document.getElementById('modal_text');
+    text.innerText = resp.message
 }
 
 
