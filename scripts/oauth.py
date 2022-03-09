@@ -41,24 +41,20 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
             cb = state.config["oauth"]["asf"]["callback_url"]
             callback_url = urllib.parse.quote(cb)
             uid = str(uuid.uuid4())
-            return redirect(
-                f"https://oauth.apache.org/auth?state={uid}&redirect_uri={callback_url}"
-            )
+            return redirect(f"https://oauth.apache.org/auth?state={uid}&redirect_uri={callback_url}")
         elif step == "callback":
             async with aiohttp.ClientSession() as session:
                 # Grab data
                 headers = {
                     "Accept": "application/json",
                 }
-                async with session.post(
-                        "https://oauth.apache.org/token", headers=headers, data=formdata
-                ) as rv:
+                async with session.post("https://oauth.apache.org/token", headers=headers, data=formdata) as rv:
                     response = await rv.json()
                     messages: list = []
                     msghash = uuid.uuid4()
                     cookie.state = {
                         "credentials": {
-                            "login": response['uid'],
+                            "login": response["uid"],
                             "name": response["fullname"],
                             "provider": "Apache OAuth",
                         },
@@ -86,7 +82,6 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
             return redirect("/")
         else:
             return "Could not find invite code. It may have already been used."
-
 
 
 def register(state: typing.Any):

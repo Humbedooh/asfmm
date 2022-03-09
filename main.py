@@ -23,12 +23,12 @@ import classes
 global_state = classes.State()
 
 httpserver = ahapi.simple(
-    api_dir="scripts",    # serve api end points from here
+    api_dir="scripts",  # serve api end points from here
     static_dir="htdocs",  # serve stuff like html and images from here
     bind_ip="127.0.0.1",
     bind_port="8080",
     state=global_state,
-    log_stdout=True
+    log_stdout=True,
 )
 
 
@@ -36,4 +36,3 @@ global_state.cookies = ahapi.session.CookieFactory(httpserver, cookie_name="asfm
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(httpserver.loop())
-

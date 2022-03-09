@@ -22,6 +22,7 @@ import uuid
 import asyncio
 import time
 import uuid
+
 """ Chat interface via WebSockets """
 
 WEBSOCKET_TIMEOUT = 10  # After 10 seconds of no activity, we consider someone signed out.
@@ -47,30 +48,36 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
         last_user_list = set()
         # All history first
         for room in state.rooms:
-            await ws.send_json({
-                "room_data": {
-                    "id": room.name,
-                    "title": room.title,
-                    "topic": room.topic,
+            await ws.send_json(
+                {
+                    "room_data": {
+                        "id": room.name,
+                        "title": room.title,
+                        "topic": room.topic,
+                    }
                 }
-            })
-            await ws.send_json({
-                "msgid": str(uuid.uuid4()),
-                "timestamp": 0,
-                "channel": room.name,
-                "sender": "",
-                "realname": "",
-                "message": f"Welcome to the {room.name} channel. " + room.topic,
-            })
+            )
+            await ws.send_json(
+                {
+                    "msgid": str(uuid.uuid4()),
+                    "timestamp": 0,
+                    "channel": room.name,
+                    "sender": "",
+                    "realname": "",
+                    "message": f"Welcome to the {room.name} channel. " + room.topic,
+                }
+            )
             for message in room.messages:
-                await ws.send_json({
-                    "msgid": message["uid"],
-                    "timestamp": message["timestamp"],
-                    "channel": message["room"],
-                    "sender": message["sender"],
-                    "realname": message["realname"],
-                    "message": message["message"],
-                })
+                await ws.send_json(
+                    {
+                        "msgid": message["uid"],
+                        "timestamp": message["timestamp"],
+                        "channel": message["room"],
+                        "sender": message["sender"],
+                        "realname": message["realname"],
+                        "message": message["message"],
+                    }
+                )
         # Now iterate over any new incoming messages, as well as status updates
         while not ws.closed:
             if whoami in state.banned:  # If banned, break and don't send messages at all
@@ -79,14 +86,16 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                 to_send = state.pending_messages[hashuid].copy()  # copy to prevent race condition
                 state.pending_messages[hashuid].clear()  # clear, so next iteration we only get new messages
                 for message in to_send:
-                    await ws.send_json({
-                        "msgid": message["uid"],
-                        "timestamp": message["timestamp"],
-                        "channel": message["room"],
-                        "sender": message["sender"],
-                        "realname": message["realname"],
-                        "message": message["message"],
-                    })
+                    await ws.send_json(
+                        {
+                            "msgid": message["uid"],
+                            "timestamp": message["timestamp"],
+                            "channel": message["room"],
+                            "sender": message["sender"],
+                            "realname": message["realname"],
+                            "message": message["message"],
+                        }
+                    )
             state.attendees[whoami] = time.time()
             if pongometer % 10 == 0:
                 currently_attending = set()
@@ -102,12 +111,14 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                             "blocked": state.blocked,
                             "banned": state.banned,
                         }
-                    await ws.send_json({
-                        "pong": str(uuid.uuid4()),
-                        "statuses": statuses,
-                        "current": list(currently_attending),
-                        "attendees": len(currently_attending),
-                        "max": len(state.attendees)}
+                    await ws.send_json(
+                        {
+                            "pong": str(uuid.uuid4()),
+                            "statuses": statuses,
+                            "current": list(currently_attending),
+                            "attendees": len(currently_attending),
+                            "max": len(state.attendees),
+                        }
                     )
             pongometer += 1
             await asyncio.sleep(0.25)

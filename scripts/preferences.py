@@ -18,6 +18,7 @@
 import ahapi
 import typing
 import aiohttp.web
+
 """ Preferences endpoint for ASFMM """
 
 
@@ -29,9 +30,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
     if not cookie:
         cookie = state.cookies.make(request, state)  # generate a new cookie, will automatically be sent to client
-        cookie.state = {
-            "credentials": None
-        }
+        cookie.state = {"credentials": None}
     if formdata.get("logout"):  # Logout - wipe the cookie
         cookie.state = {}
         return redirect()
