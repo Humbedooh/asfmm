@@ -461,10 +461,28 @@ async function invite() {
     if (name && name.length) {
         let resp = await POST("/invite", {name: name});
         if (resp && resp.success) {
-            alert(resp.url);
+            show_invite(resp.url);
         }
     }
 }
+
+function show_invite(url) {
+    let modal = document.getElementById("modal");
+    let span = document.getElementsByClassName("close")[0];
+    let text = document.getElementById('modal_text');
+    modal.style.display = "block";
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    text.innerText = "Here is your invite link: ";
+    text.inject(fixup_urls(url));
+}
+
 
 async function main() {
     const main = document.getElementById('main');
