@@ -448,6 +448,29 @@ function write_creds() {
     userlist.innerText = '';
     for (let user of current_people) {
         let udiv = new HTML('div', {}, user);
+        if (prefs.admin) {
+            // muted user
+            if (prefs.statuses.blocked.has(user)) {
+                udiv.style.color = 'grey';
+                udiv.title = "User muted - cannot post";
+                let block = new HTML('a', {href: `javascript:void(unblock_user('${user}'));`, style: { marginLeft: '6px', float: 'right'}}, 'unmute');
+                udiv.inject(block);
+            } else {
+                let block = new HTML('a', {href: `javascript:void(block_user('${user}'));`, style: { marginLeft: '6px', float: 'right'}}, 'mute');
+                udiv.inject(block);
+            }
+            // banned user
+            if (prefs.statuses.banned.has(user)) {
+                udiv.style.color = 'red';
+                udiv.title = "User banned - cannot read or post";
+                let ban = new HTML('a', {href: `javascript:void(unban_user('${user}'));`, style: { marginLeft: '6px', float: 'right'}}, 'unban');
+                udiv.inject(ban);
+            } else {
+                let ban = new HTML('a', {href: `javascript:void(ban_user('${user}'));`, style: { marginLeft: '6px', float: 'right'}}, 'ban');
+                udiv.inject(ban);
+            }
+
+        }
         userlist.inject(udiv);
     }
     // non-guests can invite others
@@ -455,6 +478,47 @@ function write_creds() {
         document.getElementById('invite').style.display = 'block';
     }
 }
+
+async function block_user(who) {
+    const resp = await POST("/mgmt", {
+        action: 'block',
+        user: who
+    });
+    prefs.statuses['blocked'].push(who);
+    alert(resp.message);
+    write_creds();
+}
+
+async function ban_user(who) {
+    const resp = await POST("/mgmt", {
+        action: 'ban',
+        user: who
+    });
+    prefs.statuses['banned'].push(who);
+    alert(resp.message);
+    write_creds();
+}
+
+async function unblock_user(who) {
+    const resp = await POST("/mgmt", {
+        action: 'unblock',
+        user: who
+    });
+    prefs.statuses['blocked'].remove(who);
+    alert(resp.message);
+    write_creds();
+}
+
+async function unban_user(who) {
+    const resp = await POST("/mgmt", {
+        action: 'unban',
+        user: who
+    });
+    prefs.statuses['banned'].remove(who);
+    alert(resp.message);
+    write_creds();
+}
+
 
 async function invite() {
     let name = window.prompt("Please enter the full name of the person you wish to invite");
@@ -579,6 +643,7 @@ async function chat() {
             max_people = js.max;
             current_people = js.current;
             current_people.sort((a, b) => a.localeCompare(b));
+            prefs.statuses = js.statuses;
             write_creds();
         }
     });
