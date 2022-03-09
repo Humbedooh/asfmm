@@ -90,7 +90,7 @@ footer {
 }
 
 #sidebar {
-    width: 320px;
+    width: 280px;
     display: inline-block;
 }
 
@@ -217,10 +217,11 @@ footer {
 }
 
 .message {
-    width: calc(100% - 440px);
+    width: calc(100% - 450px);
     display: inline-block;
     white-space: pre-wrap;
     position: relative;
+    padding-left: 10px;
 }
 
 
