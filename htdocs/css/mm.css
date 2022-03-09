@@ -197,7 +197,8 @@ footer {
     min-height: 1.25rem;
     line-height: 1rem;
     vertical-align: top;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
+    border: 1px solid #0001;
 }
 
 .line > * {
@@ -205,35 +206,47 @@ footer {
 }
 
 .line:nth-child(odd) {
-    background-color: #FAFAFA;
+    background-color: rgba(236, 243, 250, 0.61);
 }
+
 .timestamp {
     width: 180px;
     display: inline-block;
     height: 1.25rem;
     line-height: 1rem;
-    font-family: monospace;
     font-size: 11px;
-}
+    background-image: url(/images/clock.svg);
+    background-size: 16px 16px;
+    background-position: 2px 2px;
+    background-repeat: no-repeat;
+    text-indent: 22px;
+    padding-top: 2px;
+ }
 
 .name {
-    width: 230px;
-    height: 1.25rem;
-    line-height: 1rem;
+    width: 360px;
     display: inline-block;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     font-weight: bold;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
+    padding: 3px;
+    background-image: url(/images/user.png);
+    background-size: 14px 16px;
+    background-position: 2px 2px;
+    background-repeat: no-repeat;
+    text-indent: 20px;
 }
 
 .message {
-    width: calc(100% - 450px);
-    display: inline-block;
+    width: 90%;
+    display: block;
     white-space: pre-wrap;
     position: relative;
-    padding-left: 10px;
+    padding: 4px;
+    font-size: 0.95rem;
+    border-top: 1px solid #9991;
 }
 
 
