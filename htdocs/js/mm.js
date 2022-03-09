@@ -630,8 +630,8 @@ async function check_send(el, force=false) {
         event.preventDefault();
         const message = el.value;
         // Block people trying to announce themselves...
-        if (message.match(/^[-a-z0-9]+\s+\|\s+\S*/)) {
-            alert("Looks like you are trying to announce yourself. This is NOT needed. Your attendance has been recorded. If you are acting as a proxy for others, please click the Proxies button.")
+        if (message.match(/^\s*[-a-z0-9]+\s+\|\s+\S*/)) {
+            alert("It looks like you are trying to announce yourself. This is NOT needed. Your attendance has been recorded. If you are acting as a proxy for others, please click the Proxies button.")
             return
         }
         el.value = '';
