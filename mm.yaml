@@ -10,4 +10,5 @@ channels:
   backchannel:
     name: "Back-channel"
     topic: "Chat away here!"
-
+admins:
+  - testdooh

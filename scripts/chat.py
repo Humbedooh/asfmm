@@ -28,7 +28,7 @@ WEBSOCKET_TIMEOUT = 15  # After 15 seconds of no activity, we consider someone s
 
 async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
-    if not cookie or not cookie.state:
+    if not cookie or not cookie.state or not "credentials" in cookie.state:
         return {
             "success": False,
             "message": "Please authenticate first!",
@@ -68,6 +68,9 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                     })
             # now new pendings...
             while True:
+                whoami = cookie.state["credentials"]["login"]
+                if whoami in state.banned:  # If banned, break and don't send messages at all
+                    break
                 if len(state.pending_messages[hashuid]):
                     to_send = state.pending_messages[hashuid].copy()  # copy to prevent race condition
                     state.pending_messages[hashuid].clear()  # clear, so next iteration we only get new messages

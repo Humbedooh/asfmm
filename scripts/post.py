@@ -30,6 +30,11 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     realname = cookie.state["credentials"]["name"]
     message = formdata.get("message")
     roomname = formdata.get("room")
+    if sender in state.blocked or sender in state.banned:
+        return {
+            "success": False,
+            "message": "You appear to be blocked from sending messages",
+        }
     for room in state.rooms:
         if room.name == roomname:
             room.add_message(sender, realname, message)

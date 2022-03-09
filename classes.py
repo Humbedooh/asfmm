@@ -76,6 +76,8 @@ class State:
         self.invites: dict = {}
         db_name = self.config["database"]
         self.db: asfpy.sqlite.DB = asfpy.sqlite.DB(db_name)
+        self.blocked: list = []
+        self.banned: list = []
 
         print(f"Opening database {db_name}")
         if not self.db.table_exists("messages"):
