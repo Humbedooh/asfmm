@@ -285,6 +285,7 @@ let current_people = [];
 let rooms = [];
 let current_room = null;
 let notify_user = false;
+let notify_block = true;
 const URL_RE = new RegExp("(" + "(?:(?:[a-z]+)://)" + "(?:\\S+(?::\\S*)?@)?" + "(?:" + "([01][0-9][0-9]|2[0-4][0-9]|25[0-5])" + "|" + "(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" + "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" + "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" + "\\.?" + ")" + "(?::\\d{2,5})?" + "(?:[/?#]([^,<>()\\[\\] \\t\\r\\n]|(<[^:\\s]*?>|\\([^:\\s]*?\\)|\\[[^:\\s]*?\\]))*)?" + ")\\.?", "mi");
 let wscon = null;
 let tribute;
@@ -313,7 +314,8 @@ async function get_preferences(formdata) {
 }
 
 function notify(room, sender, message) {
-    new Notification(`${sender} (#${room}): ${message}`);
+    if (!notify_block) new Notification(`${sender} (#${room}): ${message}`);
+    else console.log("Found notification, but notifications are blocked for now...");
 }
 
 // OAuth gateway function
@@ -619,6 +621,7 @@ async function chat() {
             }
         }
         else if (js.pong) {
+            notify_block = false;
             attendees = js.attendees;
             max_people = js.max;
             current_people = js.current;
