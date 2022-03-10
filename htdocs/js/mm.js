@@ -675,7 +675,7 @@ function mkchannel(chan) {
         if (chan != current_room) channeldiv.style.display = 'none';
         let topic = '';
         for (let channel of rooms) {
-            if (channel.id == chan) topic = `#${channel.id} (${channel.title}): ${channel.topic}`;
+            if (channel.id == chan) topic = `${channel.title}: ${channel.topic}`;
         }
 
         let topicdiv = new HTML('div', {class: 'topic', id: 'topic_' + chan}, topic);
