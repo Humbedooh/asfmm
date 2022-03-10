@@ -661,6 +661,7 @@ function mkchannel(chan) {
 
         let topicdiv = new HTML('div', {class: 'topic', id: 'topic_' + chan}, topic);
         topicdiv.style.display = 'none';
+        topicdiv.title = topic;
         document.getElementById('channels').appendChild(topicdiv);
         document.getElementById('channels').appendChild(channeldiv);
         return channeldiv
