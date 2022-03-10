@@ -25,6 +25,8 @@ ProxyPass / http://localhost:8080/
 ### Resetting the history
 To reset the chat and quorum history, simply delete asfmm.sqlite and restart the service.
 
+### Scaling
+On a normal machine (single-core AMD EPYC for instance), the service can handle around 1,500 concurrent users, assuming the TLS terminator has been adjusted to allow such.
 
 ## Acknowledgements:
 
