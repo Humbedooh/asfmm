@@ -71,8 +71,8 @@ input[type="text"]:focus, textarea:focus {
     background-color: #fff6d7;
     border-radius: 5px;
     padding: 3px;
-    margin: 4px;
-    margin-bottom: 16px;
+    margin: 2px;
+    margin-bottom: 8px;
 }
 
 
@@ -82,8 +82,8 @@ input[type="text"]:focus, textarea:focus {
     background-color: #c5f5bb;
     border-radius: 5px;
     padding: 3px;
-    margin: 4px;
-    margin-bottom: 16px;
+    margin: 2px;
+    margin-bottom: 8px;
     display: none;
 }
 
