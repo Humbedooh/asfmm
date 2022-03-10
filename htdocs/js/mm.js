@@ -740,6 +740,11 @@ if (notifydiv) {
         }
 
     });
+    // If previously enabled, keep it sticky
+    if (Notification.permission == 'granted') {
+        notifydiv.checked = true;
+        notify_user = true;
+    }
 
     // Tribute attachment
     tribute = new Tribute({
