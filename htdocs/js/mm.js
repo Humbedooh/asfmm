@@ -731,19 +731,21 @@ if (notifydiv) {
             Notification.requestPermission().then(function (result) {
                 if (result == 'granted') {
                     notify_user = true;
+                    window.localStorage.setItem('asfmm_notify', 'true');
                     console.log("Enabling notifications");
                 }
             });
         } else {
             notify_user = false;
+            window.localStorage.setItem('asfmm_notify', 'false');
             console.log("Disabling notifications");
         }
 
     });
     // If previously enabled, keep it sticky
     if (Notification.permission == 'granted') {
-        notifydiv.checked = true;
-        notify_user = true;
+        notifydiv.checked = (window.localStorage.getItem("asfmm_notify") == "true");
+        notify_user = notifydiv.checked;
     }
 
     // Tribute attachment
