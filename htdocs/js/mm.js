@@ -576,6 +576,10 @@ async function chat() {
                 js.message = js.message.substr(4);
                 is_action = true;
             }
+            // [off] needs to be marked as such
+            if (js.message.match(/^\s*\[off\]\s*/)) {
+                messagediv.setAttribute('class', 'message_off');
+            }
             let parsed = fixup_urls(js.message);
             messagediv.inject(parsed);
             if (is_action) {

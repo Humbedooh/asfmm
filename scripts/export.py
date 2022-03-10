@@ -49,7 +49,8 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
         logfile = ""
         for message in room.messages:
             for line in message["message"].split("\n"):
-                logfile += f"[{time.ctime(message['timestamp'])}] {message['realname']} ({message['sender']}): {line}\n"
+                if not line.startswith("[off]"):  # Don't export the off-the-record stuff
+                    logfile += f"[{time.ctime(message['timestamp'])}] {message['realname']} ({message['sender']}): {line}\n"
         logfile = logfile.encode('utf-8')
         file = io.BytesIO(logfile)
         info = tarfile.TarInfo(name=f"chat-{room.name}.txt")

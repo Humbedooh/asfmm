@@ -278,6 +278,18 @@ footer {
 }
 
 
+.message_off {
+    width: 100%;
+    display: block;
+    white-space: pre-wrap;
+    position: relative;
+    padding: 4px;
+    font-size: 0.95rem;
+    border-top: 1px solid #9991;
+    color: rebeccapurple;
+}
+
+
 #userlist_wrapper {
     display: inline-block;
     background-color: aliceblue;
