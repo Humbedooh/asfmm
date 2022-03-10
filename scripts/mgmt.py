@@ -63,6 +63,20 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
             "success": True,
             "message": f"User {who} unbanned",
         }
+    elif action == "redact":
+        msgid = formdata.get("msgid")
+        if msgid:
+            for room in state.rooms:
+                msg = None
+                for message in room.messages:
+                    if message["uid"] == msgid:
+                        msg = message
+                if msg:
+                    room.messages.remove(msg)
+        return {
+            "success": True,
+            "message": f"Message redacted from records",
+        }
 
 
 def register(state: typing.Any):

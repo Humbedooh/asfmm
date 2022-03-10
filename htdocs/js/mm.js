@@ -558,9 +558,10 @@ async function chat() {
             if (!channeldiv) channeldiv =  mkchannel(js.channel);
             const now = moment(js.timestamp * 1000.0).fromNow();
             let messagediv = new HTML('div', {class: 'message'});
-            let datediv = new HTML('div', {class: 'timestamp', tz: js.timestamp*1000.0}, now);
+            let dateinner = new HTML('span', {}, now);
+            let datediv = new HTML('div', {class: 'timestamp', tz: js.timestamp*1000.0}, dateinner);
             // Update timestamp every 30-40 seconds..ish. Random distribution of load
-            window.setInterval(() => datediv.innerText = moment(parseFloat(datediv.getAttribute('tz'))).fromNow(), 30000 + (Math.random()*10000));
+            window.setInterval(() => dateinner.innerText = moment(parseFloat(datediv.getAttribute('tz'))).fromNow(), 30000 + (Math.random()*10000));
             datediv.title = new Date(js.timestamp * 1000.0).toString();
             let namediv = new HTML('div', {class: 'name'}, `${js.realname} (${js.sender})`);
             namediv.title = namediv.innerText;
@@ -590,7 +591,7 @@ async function chat() {
                 messagediv.style.fontWeight = 'bold';
                 messagediv.style.color = 'purple';
             }
-            let linediv = new HTML('div', {class: 'line'});
+            let linediv = new HTML('div', {class: 'line', id: js.msgid});
             linediv.inject(namediv);
             linediv.inject(datediv);
             linediv.inject(messagediv);
@@ -600,6 +601,11 @@ async function chat() {
             // Notify on mention??
             if (js.message.match('@' + prefs.credentials.login + "\\b") && notify_user) {
                 notify(js.channel, js.realname, js.message);
+            }
+
+            // Admin? If so, add a redact option to the message
+            if (prefs.admin) {
+                datediv.inject(new HTML('a', {style: {marginLeft: '10px'}, href: `javascript:void(redact('${js.msgid}'));`}, 'Redact'))
             }
 
             if (js.channel != current_room) {
@@ -622,6 +628,12 @@ async function chat() {
             write_creds();
         }
     });
+}
+
+async function redact(msgid) {
+    const resp = await POST("/mgmt", {action: 'redact', msgid: msgid});
+    alert(resp.message);
+    if (resp.success) document.getElementById(msgid).parentNode.removeChild(document.getElementById(msgid));
 }
 
 
