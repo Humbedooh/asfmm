@@ -3,7 +3,7 @@ ASF Members Meeting Web Chat Service
 
 ## What does this do?
 This is a simple public-only web chat service for the Apache Software Foundation.
-It's intended use is our annual members' meeting, and thus it's tied to our OAuth portal (but can be modified to work with any oauth portal). 
+Its intended use is our annual members' meeting, and thus it's tied to our OAuth portal (but can be modified to work with any oauth portal). 
 
 For simplicity's sake, and to make it more performant, all chat rooms are public and there are no private messaging features.
 
