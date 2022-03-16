@@ -36,9 +36,9 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
             "success": False,
             "message": "You appear to be blocked from sending messages",
         }
+    throttle_max = state.config.get("message_rate_limit", 5)
     for room in state.rooms:
         if room.name == roomname:
-            throttle_max = state.config.get("message_rate_limit", 5)
             if len(room.flood_control) >= throttle_max and room.flood_control[-throttle_max] >= time.time()-1:
                 return {
                     "success": False,
