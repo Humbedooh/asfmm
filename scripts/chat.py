@@ -37,11 +37,11 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
         }
     ws = aiohttp.web.WebSocketResponse(timeout=WEBSOCKET_TIMEOUT)
     await ws.prepare(request)
-    hashuid = uuid.uuid4()
-    state.pending_messages[hashuid] = []
     whoami = cookie.state["credentials"]["login"]
     if whoami in state.banned:  # If banned, break and don't send messages at all
         return {}
+    hashuid = uuid.uuid4()
+    state.pending_messages[hashuid] = []
     try:
         # Init some vars for tracking
         pongometer = 0
