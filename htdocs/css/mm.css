@@ -162,17 +162,16 @@ footer {
 
 
 #channels {
-    max-height: 500px;
     display: inline-block;
     vertical-align: top;
     margin-bottom: 25px;
     width: 100%;
+    height: calc(100vh - 450px);
 }
 
 .channel {
     overflow-y: scroll;
-    max-height: 500px;
-    min-height: 500px;
+    max-height: 100%;
     width: 100%;
     background: white;
     border-radius: 4px;
