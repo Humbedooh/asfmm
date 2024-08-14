@@ -679,7 +679,7 @@ function mkchannel(chan) {
             if (channel.id == chan) topic = `${channel.title}: ${channel.topic}`;
         }
 
-        let topicdiv = new HTML('div', {class: 'col-lg-12 clearfix', id: 'topic_' + chan}, topic);
+        let topicdiv = new HTML('div', {class: 'col-lg-12 clearfix topic', id: 'topic_' + chan}, topic);
         topicdiv.style.display = 'none';
         topicdiv.title = topic;
         document.getElementById('channels').appendChild(topicdiv);
