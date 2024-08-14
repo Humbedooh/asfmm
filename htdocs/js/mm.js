@@ -500,6 +500,7 @@ function assign_proxies() {
     text.inject(new HTML('br'));
     let txt = new HTML('textarea', {id: 'proxies'});
     txt.style.height = '300px';
+    txt.style.width = "98%";
     text.inject(txt)
     let btn = new HTML('button', {onclick: 'send_proxies();'}, 'Submit');
     text.inject(new HTML('br'));
@@ -671,14 +672,14 @@ function mkchannel(chan) {
     if (!channeldiv) {
         channeldiv = document.createElement('div');
         channeldiv.setAttribute('id', 'channel_' + chan);
-        channeldiv.setAttribute('class', 'channel');
+        channeldiv.setAttribute('class', 'channel chat-history');
         if (chan != current_room) channeldiv.style.display = 'none';
         let topic = '';
         for (let channel of rooms) {
             if (channel.id == chan) topic = `${channel.title}: ${channel.topic}`;
         }
 
-        let topicdiv = new HTML('div', {class: 'topic', id: 'topic_' + chan}, topic);
+        let topicdiv = new HTML('div', {class: 'col-lg-12 clearfix', id: 'topic_' + chan}, topic);
         topicdiv.style.display = 'none';
         topicdiv.title = topic;
         document.getElementById('channels').appendChild(topicdiv);

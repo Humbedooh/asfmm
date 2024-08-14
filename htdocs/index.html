@@ -2,39 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/mm.css"/>
+    <link rel="stylesheet" href="/css/font-awesome.css"/>
     <title>ASF Members Meeting</title>
 </head>
 <body onload="oauth_gate(main);">
-<div id="header">
-    <img src="/images/logo.png"/>
-</div>
-<div id="credentials"></div>
-<div id="quorum"></div>
-<div id="main">
-    <div id="sidebar">
-        <div id="action_picker">
-            <ul id="chanpicker">
-            </ul>
-        </div>
-        <div id="userlist_wrapper">
-
-            <h1>Currently online (<span id="counter">?</span>):</h1>
-            <ul id="userlist">
-
-            </ul>
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12">
+            <div id="header">
+                <img src="/images/logo.png"/>
+            </div>
         </div>
     </div>
-    <div id="channels"></div>
+    <div class="row">
+        <div class="col-lg-12 d-lg-inline-block d-md-none">
+            <div id="credentials"></div>
+            <div id="quorum"></div>
+        </div>
+
+    </div>
+    <div class="row clearfix">
+        <div class="col-lg-12">
+            <div class="card chat-app">
+                <div id="sidebar" class="people-list">
+                    <div id="action_picker">
+                        <ul id="chanpicker">
+                        </ul>
+                    </div>
+                    <div id="userlist_wrapper">
+
+                        <h1>Currently online (<span id="counter">?</span>):</h1>
+                        <ul id="userlist">
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="chat">
+
+                    <div class="chat-history">
+                        <ul class="m-b-0" id="channels">
+                        </ul>
+                    </div>
+                    <div style="text-align: center;">
+                        <div class="chat-message clearfix">
+                            <div class="input-group mb-0">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-send"></i></span>
+                                </div>
+                                <textarea id="mooosage" class="form-control" onkeydown="check_send(this);" placeholder="Write your message here..."></textarea>
+                            </div>
+                        </div>
+                        <input type="button" value="Invite a guest" id="invite" style="display: none;" onclick="invite();">
+                        <input type="button" value="Proxies" id="assign_proxies" style="display: none;" onclick="assign_proxies();">
+                        <input type="button" value="Export logs" id="export" style="display: none;" onclick="window.open('/export', '_blank');">
+                        <br/>
+                        <input type="checkbox" id="notify"><label for="notify">Enable notifications</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div style="text-align: center">Type stuff here: <br/><textarea id="mooosage" onkeydown="check_send(this);"></textarea>
-    <input type="button" value="Send" onclick="check_send(document.getElementById('mooosage'), true);"><hr/>
-    <input type="button" value="Invite a guest" id="invite" style="display: none;" onclick="invite();">
-    <input type="button" value="Proxies" id="assign_proxies" style="display: none;" onclick="assign_proxies();">
-    <input type="button" value="Export logs" id="export" style="display: none;" onclick="window.open('/export', '_blank');">
-    <br/>
-    <input type="checkbox" id="notify"><label for="notify">Enable notifications</label>
-</div>
+
 
 <div id="modal" class="modal">
     <div class="modal-content">
