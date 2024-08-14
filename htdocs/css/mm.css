@@ -374,7 +374,7 @@ input[type="button"] {
 
 
 .label {
-    border-radius: 50%;
+    border-radius: 45%;
     min-width: 16px;
     display: inline-block;
     margin-top: -4px;
@@ -382,11 +382,11 @@ input[type="button"] {
     color: white;
     background-color: #2e73b7;
     text-align: center;
-    line-height: 10px;
-    font-size: 12px;
+    line-height: 11px;
+    font-size: 11px;
     padding: 3px;
     border: 2px solid white;
-    height: 16px;
+    height: 19px;
 }
 
 li > span:empty {
