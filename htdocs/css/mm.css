@@ -486,13 +486,13 @@ li > span:empty {
 .card {
     background: #fff;
     transition: .5s;
-    border: 0;
+    border: none;
     margin-bottom: 32px;
     border-radius: .35rem;
     position: relative;
     width: 100%;
     min-height: 600px;
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
+    box-shadow: 0 2px 3px 0 rgb(0 0 0 / 30%);
 }
 .chat-app .people-list {
     position: absolute;
@@ -504,7 +504,7 @@ li > span:empty {
 }
 
 .chat-app .chat {
-    margin-left: 320px;
+    margin-left: 300px;
     border-left: 1px solid #eaeaea;
 }
 
@@ -664,7 +664,7 @@ li > span:empty {
     font-size: 0;
     content: " ";
     clear: both;
-    height: 0
+    height: 0;
 }
 
 @media only screen and (max-width: 767px) {
