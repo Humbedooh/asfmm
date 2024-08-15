@@ -189,12 +189,12 @@ footer {
     min-height: 1.25rem;
     line-height: 1rem;
     margin: 2px;
-    padding-left: 6px;
+    padding-left: 16px;
     vertical-align: top;
     margin-bottom: 12px;
     border-bottom: 1px solid #0001;
     background-image: url(/images/user.png);
-    background-size: 14px 16px;
+    background-size: 24px 24px;
     background-position: 2px 2px;
     background-repeat: no-repeat;
 }
@@ -260,8 +260,9 @@ footer {
     white-space: pre-wrap;
     position: relative;
     padding: 4px;
-    padding-left: 12px;
+    padding-left: 14px;
     font-size: 0.9rem;
+    opacity: 80%;
     color: black;
 }
 
@@ -299,11 +300,20 @@ footer {
 
 #userlist {
     font-size: 0.9rem;
-    margin-top: 0px;
-    margin-left: 8px;
-    padding: 12px;
+    margin-top: 0;
+    margin-left: 4px;
+    padding: 10px;
     color: #FFF;
-    list-style: url(/images/user.png);
+    list-style: none;
+}
+
+#userlist li {
+    background-image: url(/images/user.png);
+    background-size: 14px 14px;
+    background-position: 0 4px;
+    background-repeat: no-repeat;
+    padding-left: 4px;
+    text-indent: 16px;
 }
 
 #userlist li:nth-child(odd) {
