@@ -6,8 +6,8 @@ html {
 }
 
 body {
-    background-color: #59547e;
-    max-width: 1800px;
+    background-color: #8d9bac;
+    max-width: 2200px;
     margin: 0 auto;
 }
 
@@ -51,10 +51,10 @@ body {
     font-size: 0.9rem;
     text-align: center;
     background-color: #fff6d7;
-    border-radius: 5px;
+    border-radius: 4px;
     padding: 3px;
-    margin: 2px;
-    margin-bottom: 8px;
+    margin: 1px;
+    margin-bottom: 4px;
 }
 
 
@@ -62,10 +62,10 @@ body {
     font-size: 0.9rem;
     text-align: center;
     background-color: #c5f5bb;
-    border-radius: 5px;
+    border-radius: 4px;
     padding: 3px;
-    margin: 2px;
-    margin-bottom: 8px;
+    margin: 1px;
+    margin-bottom: 4px;
     display: none;
 }
 
@@ -84,18 +84,23 @@ footer {
 }
 
 #sidebar {
-    width: 280px;
     display: inline-block;
+    background-color: #353961;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    height: calc(100% + 1px);
+    color: #fff9;
 }
 
 #action_picker {
-    background-color: #F7F7F7;
+    background-color: #0001;
     display: block;
-    border-radius: 6px;
-    margin: 4px;
+    border-bottom: 1px solid #fff7;
+    margin: 0px;
     text-indent: 0px;
     text-align: center;
     padding-top: 0px;
+    width: 100%;
 }
 
 #action_picker ul {
@@ -107,17 +112,17 @@ footer {
 }
 
 #action_picker li {
-    background-color: #afc6d0;
+    background-color: #6e797e;
     color: white;
-    border-radius: 5px;
-    margin: 8px;
+    border-radius: 3px;
+    margin: 4px;
     padding: 4px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: bold;
-    box-shadow: 0px 4px #7c8f96;
+    box-shadow: 0 2px #FFF1;
     text-decoration: none;
     display: inline-block;
-    width: calc(100% - 40px);
+    width: calc(100% - 20px);
 }
 
 #action_picker a {
@@ -131,12 +136,12 @@ footer {
 }
 
 #action_picker li[type="active"] {
-    background-color: #c90584;
-    box-shadow: 0px 4px #980b8c;
+    background-color: #05c971;
+    box-shadow: 0 2px #FFF1;
 }
 
 #action_picker li[type="active"]:hover {
-    background-color: #e80d9b;
+    background-color: #08dc7d;
     cursor: pointer;
 }
 
@@ -184,9 +189,14 @@ footer {
     min-height: 1.25rem;
     line-height: 1rem;
     margin: 2px;
+    padding-left: 6px;
     vertical-align: top;
-    margin-bottom: 6px;
-    border: 1px solid #0001;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #0001;
+    background-image: url(/images/user.png);
+    background-size: 14px 16px;
+    background-position: 2px 2px;
+    background-repeat: no-repeat;
 }
 
 .line > * {
@@ -194,17 +204,18 @@ footer {
 }
 
 .line:nth-child(odd) {
-    background-color: rgba(236, 243, 250, 0.61);
+    background-color: rgba(236, 243, 250, 0.25);
 }
 
 .topic {
     position: relative;
     width: 100%;
     height: 32px;
-    background-color: #0001;
+    background-color: #000B;
+    color: #FFF;
     z-index: 5;
     font-size: 0.9rem;
-    font-weight: bold;
+    font-weight: bolder;
     padding: 6px;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -214,8 +225,7 @@ footer {
 }
 
 .timestamp {
-    opacity: 75%;
-    width: 180px;
+    opacity: 60%;
     display: inline-block;
     height: 1.25rem;
     line-height: 1rem;
@@ -226,24 +236,22 @@ footer {
     background-repeat: no-repeat;
     text-indent: 22px;
     padding-top: 2px;
+    float: right;
  }
 
 .name {
-    opacity: 75%;
+    opacity: 85%;
     width: 360px;
     display: inline-block;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    font-weight: bold;
-    font-size: 0.8rem;
-    color: #006;
+    font-weight: bolder;
+    font-size: 0.9rem;
+    color: #070719;
     padding: 3px;
-    background-image: url(/images/user.png);
-    background-size: 14px 16px;
-    background-position: 2px 2px;
-    background-repeat: no-repeat;
-    text-indent: 20px;
+    text-indent: 12px;
+
 }
 
 .message {
@@ -252,8 +260,8 @@ footer {
     white-space: pre-wrap;
     position: relative;
     padding: 4px;
-    font-size: 0.95rem;
-    border-top: 1px solid #9991;
+    padding-left: 12px;
+    font-size: 0.9rem;
     color: black;
 }
 
@@ -272,26 +280,29 @@ footer {
 
 #userlist_wrapper {
     display: inline-block;
-    width: 100%;
+    width: calc(100% - 12px);
     border-radius: 6px;
-    height: 450px;
+    height: calc(100% - 200px);
     padding: 4px;
     vertical-align: top;
     position: relative;
     margin: 4px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #userlist_wrapper h1 {
-    font-size: 1rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #FFE;
     margin: 0px;
 }
 
 #userlist {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     margin-top: 0px;
     margin-left: 8px;
     padding: 12px;
+    color: #FFF;
     list-style: url(/images/user.png);
 }
 
@@ -480,24 +491,24 @@ li > span:empty {
     background: #fff;
     transition: .5s;
     border: 0;
-    margin-bottom: 30px;
-    border-radius: .55rem;
+    margin-bottom: 32px;
+    border-radius: .35rem;
     position: relative;
     width: 100%;
     min-height: 600px;
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
 }
 .chat-app .people-list {
-    width: 280px;
     position: absolute;
     left: 0;
     top: 0;
-    padding: 20px;
-    z-index: 7
+    border-radius: .35rem;
+    padding-bottom: 20px;
+    z-index: 7;
 }
 
 .chat-app .chat {
-    margin-left: 280px;
+    margin-left: 320px;
     border-left: 1px solid #eaeaea;
 }
 
