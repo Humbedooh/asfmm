@@ -416,11 +416,9 @@ li > span:empty {
     }
     #sidebar {
         font-size: 0.9rem !important;
-        height: 20px;
         margin-top: 0px !important;
         padding: 2px;
         display: inline-block;
-        max-width: 240px;
     }
 
     #action_picker li {
