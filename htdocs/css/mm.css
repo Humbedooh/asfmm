@@ -392,21 +392,9 @@ input[type="button"] {
     transition: opacity 1200ms;
 }
 
-
-.label {
-    border-radius: 45%;
-    min-width: 16px;
-    display: inline-block;
-    margin-top: -4px;
-    margin-left: 12px;
-    color: white;
-    background-color: #2e73b7;
-    text-align: center;
-    line-height: 11px;
-    font-size: 11px;
-    padding: 3px;
-    border: 2px solid white;
-    height: 19px;
+.badge-pad {
+    margin-left: 6px;
+    font-size: 0.6rem;
 }
 
 li > span:empty {

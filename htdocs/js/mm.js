@@ -728,7 +728,7 @@ function show_channel(chan) {
         let a = new HTML('a', { href: "javascript:void(show_channel('" + room.id + "'))"});
         a.appendChild(li);
         li.innerText = room.title;
-        let unreads = new HTML('span', {class: 'label'});
+        let unreads = new HTML('span', {class: 'badge badge-primary badge-pad'});
         unreads.setAttribute('id', 'unread_' + room.id);
         if (room.unread) unreads.innerText = room.unread;
         li.appendChild(unreads);
