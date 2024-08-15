@@ -640,13 +640,17 @@ async function redact(msgid) {
     if (resp.success) document.getElementById(msgid).parentNode.removeChild(document.getElementById(msgid));
 }
 
-
 async function check_send(el, force=false) {
     // Ignore if we're in the middle of a tribute selection
     if (document.getElementsByClassName('tribute-container').length && document.getElementsByClassName('tribute-container')[0].style.display != 'none') {
         return
     }
-    if(force || event.key === 'Enter' && !event.shiftKey) {
+    // alternate newline command
+    if (event.key === 'Enter' && event.ctrlKey) {
+        el.value += "\n";
+        return
+    }
+    if(force || (event.key === 'Enter') && !(event.shiftKey || event.ctrlKey)) {
         event.preventDefault();
         const message = el.value;
         // Block people trying to announce themselves...
