@@ -61,8 +61,9 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                         "pending_messages": messages,
                         "admin": response["uid"] in state.config["admins"],
                     }
-                    # Update quorum
-                    state.quorum.add(response["uid"])
+                    # Update quorum if member
+                    if response["uid"] in state.members:
+                        state.quorum.add(response["uid"])
                     return redirect("/")
     elif provider == "guest":
         code = formdata.get("code")
