@@ -654,6 +654,22 @@ async function check_send(el, force=false) {
             alert("It looks like you are trying to announce yourself. This is NOT needed. Your attendance has been recorded. If you are acting as a proxy for others, please click the Proxies button.")
             return
         }
+        // Commands?
+        let action_m = message.match(/^\/([a-z]+)\s+(\S+)$/);
+        if (action_m) {
+            let act = action_m[1];
+            let target = action_m[2];
+            if (act === "unban") {
+                await unban_user(target);
+                el.value = "";  // reset message field
+                return
+            }
+            if (act === "ban") {
+               await ban_user(target);
+               el.value = "";  // reset message field
+               return
+           }
+        }
         el.value = '';
         let resp = await POST("/post", {
             room: current_room,
