@@ -341,7 +341,7 @@ function write_creds() {
     }
     for (let user of current_people) {
         let udiv = new HTML('li', {}, user);
-        if (prefs.admin) {
+        if (prefs.admin && user !== prefs.credentials.login) {
             // muted user
             if (prefs.statuses.blocked.has(user)) {
                 udiv.style.color = 'grey';
@@ -363,6 +363,9 @@ function write_creds() {
                 udiv.inject(ban);
             }
 
+        }
+        if (user === prefs.credentials.login) {
+            udiv.innerText += " (You)";
         }
         userlist.inject(udiv);
     }
