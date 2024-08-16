@@ -44,6 +44,13 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     info.size = len(attendance)
     tar.addfile(tarinfo=info, fileobj=file)
 
+    # Export proxy attendance (quorum minus in-person attendance)
+    proxy_attendance = "\n".join([x for x in state.quorum.members if x not in state.attendees.keys()]).encode('utf-8')
+    file = io.BytesIO(proxy_attendance)
+    info = tarfile.TarInfo(name="proxies-counted.txt")
+    info.size = len(proxy_attendance)
+    tar.addfile(tarinfo=info, fileobj=file)
+
     # Export audit log
     auditlog = ""
     for row in state.db.fetch("auditlog", limit=0):
