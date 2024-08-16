@@ -247,10 +247,7 @@ HTMLElement.prototype.inject = function(child) {
     if (isArray(child)) {
         for (j = 0, len = child.length; j < len; j++) {
             item = child[j];
-            if (typeof item === 'string') {
-                item = txt(item);
-            }
-            this.appendChild(item);
+            this.inject(item);
         }
     } else {
         if (typeof child === 'string') {
@@ -584,6 +581,12 @@ async function chat() {
                 messagediv.setAttribute('class', 'message_off');
             }
             let parsed = fixup_urls(js.message);
+            parsed = fixup_formatting(parsed, /\b__(.+?)__\b/, "b");
+            parsed = fixup_formatting(parsed, /\b_(.+?)_\b/, "i");
+            parsed = fixup_formatting(parsed, /\b\*\*(.+?)\*\*\b/, "b");
+            parsed = fixup_formatting(parsed, /\b\*(.+?)\*\b/, "i");
+            parsed = fixup_formatting(parsed, "`(.+?)`", "kbd");
+
             messagediv.inject(parsed);
             if (is_action) {
                 messagediv.style.fontStyle = 'italic';
@@ -794,3 +797,60 @@ $(document).keyup(function (event) {
         $('#modal_help').hide();
     }
 });
+
+
+
+function fixup_formatting(splicer, pattern, format) {
+    const pat = new RegExp(pattern);
+    if (typeof splicer == 'object') {
+        let newsplicer = [];
+        for (let el of splicer) {
+            if (typeof el === "string" || isArray(el)) newsplicer.push(fixup_formatting(el, pattern, format));
+            else newsplicer.push(el);
+        }
+        return newsplicer;
+        //splicer = splicer.innerText;
+    }
+    /* Array holding text and links */
+    let i, m, t, textbits, url, urls;
+    textbits = [];
+
+    /* Find the first link, if any */
+    i = splicer.search(pat);
+    let blocks = 0;
+
+    /* While we have more links, ... */
+    while (i !== -1) {
+        blocks++;
+
+        /* Only parse the first 250 URLs... srsly */
+        if (blocks > 250) {
+            break;
+        }
+
+        /* Text preceding the link? add it to textbits frst */
+        if (i > 0) {
+            t = splicer.substr(0, i);
+            textbits.push(t);
+            splicer = splicer.substr(i);
+        }
+
+        /* Find the URL and cut it out as a link */
+        m = splicer.match(pat);
+        if (m) {
+            let block = m[1];
+            let preblock = m[0];
+            i = preblock.length;
+            t = splicer.substr(0, i);
+            textbits.push(new HTML(format, {}, block));
+            splicer = splicer.substr(i);
+        }
+
+        /* Find the next link */
+        i = splicer.search(pat);
+    }
+
+    /* push the remaining text into textbits */
+    textbits.push(splicer);
+    return textbits;
+}
