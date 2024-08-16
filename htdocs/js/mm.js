@@ -583,8 +583,8 @@ async function chat() {
             let parsed = fixup_urls(js.message);
             parsed = fixup_formatting(parsed, /\b__(.+?)__\b/, "b");
             parsed = fixup_formatting(parsed, /\b_(.+?)_\b/, "i");
-            parsed = fixup_formatting(parsed, /\b\*\*(.+?)\*\*\b/, "b");
-            parsed = fixup_formatting(parsed, /\b\*(.+?)\*\b/, "i");
+            parsed = fixup_formatting(parsed, /(?=[\s^])?\*\*(.+?)\*\*(?=[\s$])?/, "b");
+            parsed = fixup_formatting(parsed, /(?=[\s^])?\*(.+?)\*(?=[\s$])?/, "i");
             parsed = fixup_formatting(parsed, "`(.+?)`", "kbd");
 
             messagediv.inject(parsed);
