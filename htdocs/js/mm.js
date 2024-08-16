@@ -330,18 +330,24 @@ async function oauth_gate(func) {
 // Top bar status writer
 function write_creds() {
     const creds = document.getElementById('credentials');
-    if (creds) creds.innerText = `Logged in as ${prefs.credentials.name} (${prefs.credentials.login}, via ${prefs.credentials.provider}). Currently ${attendees} attending (total attendance this meeeting: ${max_people}). `;
+    const username = document.getElementById('username');
+    username.innerText = prefs.credentials.name;
+    const userid = document.getElementById('userid');
+    userid.innerText = prefs.credentials.login;
+    //if (creds) creds.innerText = `Logged in as ${prefs.credentials.name} (${prefs.credentials.login}, via ${prefs.credentials.provider}). Currently ${attendees} attending (total attendance this meeeting: ${max_people}). `;
     let logout_link = document.createElement('a');
+    logout_link.style.marginLeft = "10px";
+    logout_link.style.fontSize = "0.9rem";
     logout_link.href = "/preferences?logout=true";
     logout_link.innerText = "Sign out";
-    creds.appendChild(logout_link);
+    userid.appendChild(logout_link);
 
     let counter = document.getElementById('counter');
     counter.innerText = current_people.length;
     let userlist = document.getElementById('userlist');
     userlist.innerText = '';
     if (prefs.admin) {
-        document.getElementById('sidebar').style.width = '290px';
+        //document.getElementById('sidebar').style.width = '290px';
     }
     for (let user of current_people) {
         let udiv = new HTML('li', {}, user);
@@ -375,17 +381,16 @@ function write_creds() {
         document.getElementById('invite').style.display = 'block';
         document.getElementById('assign_proxies').style.display = 'block';
     }
-
     if (prefs.quorum && prefs.quorum.present.length > prefs.quorum.required) {
         let quorum = document.getElementById('quorum');
         quorum.style.display = 'block';
-        quorum.style.background = '#c5f5bb';
-        quorum.innerText = `Quorum has been reached. ${prefs.quorum.present.length} members present or assigned via proxy out of a required ${prefs.quorum.required}.`;
+        quorum.className = 'bg-success';
+        quorum.innerText = `Quorum reached. ${prefs.quorum.present.length} members out of a required ${prefs.quorum.required} accounted for.`;
     } else if (prefs.quorum) {
         let quorum = document.getElementById('quorum');
         quorum.style.display = 'block';
-        quorum.style.background = '#f5bbc6';
-        quorum.innerText = `Quorum has NOT been reached yet. ${prefs.quorum.present.length} members present or assigned via proxy out of a required ${prefs.quorum.required}.`;
+        quorum.className = 'bg-danger';
+        quorum.innerText = `Quorum not yet reached. ${prefs.quorum.present.length} out of a required ${prefs.quorum.required} members present.`;
     }
     nicks.splice(0,nicks.length);
     for (let nick of current_people) {
@@ -592,7 +597,7 @@ async function chat() {
             }
             if (js.message.match('@' + prefs.credentials.login + "\\b")) {
                 messagediv.style.fontWeight = 'bold';
-                messagediv.style.color = 'purple';
+                messagediv.style.color = '#3120a3';
             }
             let linediv = new HTML('div', {class: 'line', id: js.msgid});
             linediv.inject(namediv);
@@ -732,7 +737,8 @@ function show_channel(chan) {
         let a = new HTML('a', { href: "javascript:void(show_channel('" + room.id + "'))"});
         a.appendChild(li);
         li.innerText = room.title;
-        let unreads = new HTML('span', {class: 'badge badge-primary badge-pad'});
+        li.className = "btn";
+        let unreads = new HTML('span', {class: 'badge bg-primary badge-pad'});
         unreads.setAttribute('id', 'unread_' + room.id);
         if (room.unread) unreads.innerText = room.unread;
         li.appendChild(unreads);
@@ -782,3 +788,7 @@ if (notifydiv) {
     );
     tribute.attach(document.getElementById('mooosage'));
 }
+
+
+const sys_theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+document.documentElement.setAttribute('data-bs-theme', sys_theme);
