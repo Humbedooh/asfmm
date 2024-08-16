@@ -63,14 +63,14 @@ h3 {
 
 
 #quorum {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: bolder;
     text-align: center;
-    background-color: #c5f5bb;
-    border-radius: 4px;
-    padding: 3px;
-    margin: 1px;
-    margin-bottom: 4px;
+    width: 100%;
     display: none;
+    margin: 0;
+    padding: 0;
+    color: white;
 }
 
 footer {
@@ -89,15 +89,15 @@ footer {
 
 #sidebar {
     display: inline-block;
-    background-color: #262f3b;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     height: calc(100% + 1px);
-    color: #fff9;
+    max-width: 300px;
+    background-color: #0001;
+    border-right: 1px solid #0006;
 }
 
 #action_picker {
-    background-color: #0001;
     display: block;
     border-bottom: 1px solid #fff7;
     margin: 0px;
@@ -107,17 +107,32 @@ footer {
     width: 100%;
 }
 
+.infobox {
+    display: block;
+    border-bottom: 1px solid #fff4;
+    margin: 0px;
+    text-indent: 0px;
+    text-align: center;
+    font-size: 1rem;
+    max-width: 100%;
+    position: relative;
+}
+
+.infobox .btn {
+    border-radius: 4px;
+}
+
 #action_picker ul {
     list-style: none;
     margin: 0px auto;
     padding: 0px;
+    padding-bottom: 6px;
     display: inline-block;
     width: 100%;
 }
 
 #action_picker li {
     background-color: #6e797e;
-    color: white;
     border-radius: 3px;
     margin: 4px;
     padding: 4px;
@@ -130,7 +145,7 @@ footer {
 }
 
 #action_picker a {
-    color: white;
+
     text-decoration: none;
 }
 
@@ -185,7 +200,6 @@ footer {
     overflow-y: scroll;
     max-height: calc(100% - 16px);
     width: 100%;
-    background: white;
     display: inline-block;
 }
 
@@ -208,7 +222,7 @@ footer {
 }
 
 .line:nth-child(odd) {
-    background-color: rgba(236, 243, 250, 0.25);
+    background-color: rgba(236, 243, 250, 0.05);
 }
 
 .topic {
@@ -252,7 +266,6 @@ footer {
     text-overflow: ellipsis;
     font-weight: bolder;
     font-size: 0.9rem;
-    color: #070719;
     padding: 3px;
     text-indent: 12px;
 
@@ -267,7 +280,6 @@ footer {
     padding-left: 14px;
     font-size: 0.9rem;
     opacity: 80%;
-    color: black;
 }
 
 
@@ -279,7 +291,7 @@ footer {
     padding: 4px;
     font-size: 0.95rem;
     border-top: 1px solid #9991;
-    color: rebeccapurple;
+    color: #6923af;
 }
 
 
@@ -295,19 +307,19 @@ footer {
     overflow-y: auto;
 }
 
-#userlist_wrapper h1 {
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: #FFE;
-    margin: 0px;
+h6 {
+    text-align: center;
+    width: 100%;
+    margin: 2px;
+    padding: 6px 0;
 }
+
 
 #userlist {
     font-size: 0.9rem;
     margin-top: 0;
     margin-left: 4px;
     padding: 10px;
-    color: #FFF;
     list-style: none;
 }
 
@@ -409,7 +421,7 @@ li > span:empty {
 
 /* Shrink UI on mobile */
 @media screen and (max-width: 1200px) {
-    #userlist_wrapper {
+    .sidebar {
         max-width: 280px !important;
     }
     #userlist a {
@@ -488,7 +500,6 @@ li > span:empty {
 
 
 .card {
-    background: #fff;
     transition: .5s;
     border: none;
     margin-bottom: 32px;
@@ -562,6 +573,8 @@ li > span:empty {
     padding: 15px 20px;
     border-bottom: 2px solid #f4f7f6
 }
+
+
 
 .chat .chat-header img {
     float: left;
@@ -676,7 +689,6 @@ li > span:empty {
         height: 465px;
         width: 100%;
         overflow-x: auto;
-        background: #fff;
         left: -400px;
         display: none
     }

@@ -3,9 +3,9 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"/>
     <link rel="stylesheet" href="/css/mm.css"/>
-    <link rel="stylesheet" href="/css/font-awesome.css"/>
+    <link rel="stylesheet" href="/css/font-awesome.css" integrity="sha384-FckWOBo7yuyMS7In0aXZ0aoVvnInlnFMwCv77x9sZpFgOonQgnBj1uLwenWVtsEj"/>
     <title>ASF Members Meeting</title>
 </head>
 <body onload="oauth_gate(main);">
@@ -17,26 +17,29 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12 d-lg-inline-block d-md-none">
-            <div id="credentials"></div>
-            <div id="quorum"></div>
-        </div>
-
-    </div>
     <div class="row clearfix">
         <div class="col-lg-12">
             <div class="card chat-app">
                 <div id="sidebar" class="people-list">
+                    <div class="infobox">
+                        <h6 id="username"></h6>
+                        <span id="userid"></span>
+                        <br>
+                        <input type="button" class="btn btn-primary" value="Invite a guest" id="invite" style="display: none;" onclick="invite();">
+                        <input type="button" class="btn btn-primary" value="Proxies" id="assign_proxies" style="display: none;" onclick="assign_proxies();">
+                        <input type="button" class="btn btn-info" value="Export logs" id="export" style="display: none;" onclick="window.open('/export', '_blank');">
+                    </div>
+                    <div class="infobox">
+                        <div id="quorum"></div>
+                    </div>
                     <div id="action_picker">
+                        <h6>Channels:</h6>
                         <ul id="chanpicker">
                         </ul>
                     </div>
                     <div id="userlist_wrapper">
-
-                        <h1>Currently online (<span id="counter">?</span>):</h1>
+                        <h6>Currently online (<span id="counter">?</span>):</h6>
                         <ul id="userlist">
-
                         </ul>
                     </div>
                 </div>
@@ -50,15 +53,11 @@
                         <div class="chat-message clearfix">
                             <div class="input-group mb-0">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa fa-send"></i></span>
+                                    <span class="input-group-text" style="height: 56px;"><i class="fa fa-send"></i></span>
                                 </div>
-                                <textarea id="mooosage" class="form-control" onkeydown="check_send(this);" placeholder="Write your message here. You can use shift+enter for multiline messages."></textarea>
+                                <textarea id="mooosage" class="form-control" style="height: 56px;" onkeydown="check_send(this);" placeholder="Write your message here. You can use shift+enter for multiline messages."></textarea>
                             </div>
                         </div>
-                        <input type="button" class="btn btn-primary" value="Invite a guest" id="invite" style="display: none;" onclick="invite();">
-                        <input type="button" class="btn btn-primary" value="Proxies" id="assign_proxies" style="display: none;" onclick="assign_proxies();">
-                        <input type="button" class="btn btn-info" value="Export logs" id="export" style="display: none;" onclick="window.open('/export', '_blank');">
-                        <br/>
                         <input type="checkbox" id="notify"><label for="notify">&nbsp;Enable notifications</label>
                     </div>
                 </div>
@@ -75,8 +74,10 @@
     </div>
 </div>
 
-<script src="/js/moment.min.js" type="application/ecmascript"></script>
-<script src="/js/tribute.min.js" type="application/ecmascript"></script>
+<script src="/js/moment.min.js" type="application/ecmascript" integrity="sha384-Uz1UHyakAAz121kPY0Nx6ZGzYeUTy9zAtcpdwVmFCEwiTGPA2K6zSGgkKJEQfMhK"></script>
+<script src="/js/tribute.min.js" type="application/ecmascript" integrity="sha384-3E2PkQRCdPVWYDHSTKFXkBuGxBa9CHBOtqGVzNjszfcrjGiY3hCZa5rlpbIkU5bL"></script>
+<script src="/js/jquery.js" type="application/ecmascript" integrity="sha384-wsqsSADZR1YRBEZ4/kKHNSmU+aX8ojbnKUMN4RyD3jDkxw5mHtoe2z/T/n4l56U/"></script>
+<script src="/js/bootstrap.bundle.js" type="application/ecmascript" integrity="sha384-5xO2n1cyGKAe630nacBqFQxWoXjUIkhoc/FxQrWM07EIZ3TuqkAsusDeyPDOIeid"></script>
 <script src="/js/mm.js" type="application/ecmascript"></script>
 </body>
 </html>
