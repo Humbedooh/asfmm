@@ -536,7 +536,8 @@ async function main() {
 // chat loop
 async function chat() {
     const prot = (location.protocol == 'https:') ? 'wss://' : 'ws://';
-    wscon = new WebSocket(prot + location.hostname + '/chat');
+    const port = (location.port == "") ? "" : ":" + location.port;
+    wscon = new WebSocket(prot + location.hostname + port + '/chat');
     // Connection killed
     wscon.addEventListener('close', function (event) {
         location.reload();
