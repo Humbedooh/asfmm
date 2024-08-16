@@ -786,3 +786,11 @@ if (notifydiv) {
 
 const sys_theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 document.documentElement.setAttribute('data-bs-theme', sys_theme);
+
+
+$(document).keyup(function (event) {
+    if (event.which === 27) {
+        $('#modal').hide();
+        $('#modal_help').hide();
+    }
+});
