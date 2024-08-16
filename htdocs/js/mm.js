@@ -597,7 +597,7 @@ async function chat() {
             }
             if (js.message.match('@' + prefs.credentials.login + "\\b")) {
                 messagediv.style.fontWeight = 'bold';
-                messagediv.style.color = '#3120a3';
+                messagediv.style.color = '#3443e8';
             }
             let linediv = new HTML('div', {class: 'line', id: js.msgid});
             linediv.inject(namediv);
