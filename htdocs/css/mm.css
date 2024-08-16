@@ -410,6 +410,7 @@ input[type="button"],#navbarToggleExternalContent>a {
 
 .badge-pad {
     margin-left: 6px;
+    padding-bottom: 5px;
     font-size: 0.6rem;
 }
 
