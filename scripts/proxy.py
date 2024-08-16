@@ -17,6 +17,7 @@
 
 import ahapi
 import typing
+import time
 
 """Proxy assignment end point for ASFMM"""
 
@@ -39,11 +40,13 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
         elif member:
             invalid.add(member)
     if not invalid:
+        state.db.insert("auditlog", {"uid": whoami, "timestamp": time.time(), "action": f"added the following {len(assigned)} proxies: {', '.join(list(assigned))}"})
         return {
             "success": True,
             "message": f"{len(assigned)} proxies assigned to you: " + ", ".join(list(assigned))
         }
     else:
+        state.db.insert("auditlog", {"uid": whoami, "timestamp": time.time(), "action": f"added the following {len(assigned)} proxies: {', '.join(list(assigned))}. The following {len(invalid)} invalid proxies were present: {', '.join(list(invalid))}"})
         return {
             "success": True,
             "message": f"{len(assigned)} proxies assigned to you: " + ", ".join(list(assigned)) + f"\n{len(invalid)} proxies were invalid or already assigned: " + ", ".join(list(invalid))

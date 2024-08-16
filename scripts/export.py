@@ -44,6 +44,16 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     info.size = len(attendance)
     tar.addfile(tarinfo=info, fileobj=file)
 
+    # Export audit log
+    auditlog = ""
+    for row in state.db.fetch("auditlog", limit=0):
+        auditlog += f"[{time.ctime(row['timestamp'])}] {row ['uid']} {row['action']}\n"
+    auditlog = auditlog.encode('utf-8')
+    file = io.BytesIO(auditlog)
+    info = tarfile.TarInfo(name="auditlog.txt")
+    info.size = len(auditlog)
+    tar.addfile(tarinfo=info, fileobj=file)
+
     # Export chat logs
     for room in state.rooms:
         logfile = ""

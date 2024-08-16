@@ -20,6 +20,7 @@ import typing
 import aiohttp.web
 import urllib.parse
 import uuid
+import time
 
 """OAuth end point for ASFMM"""
 
@@ -64,6 +65,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                     # Update quorum if member
                     if response["uid"] in state.members:
                         state.quorum.add(response["uid"])
+                        state.db.insert("auditlog", {"uid": response["uid"], "timestamp": time.time(), "action": f"logged in via {cookie.state['credentials']['provider']}"})
                     return redirect("/")
     elif provider == "guest":
         code = formdata.get("code")

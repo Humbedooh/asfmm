@@ -44,6 +44,16 @@ CREATE TABLE "quorum" (
 """
 
 
+DB_CREATE_AUDIT = """
+CREATE TABLE "auditlog" (
+    "uid"	TEXT NOT NULL,
+    "timestamp"	REAL NOT NULL,
+    "action" TEXT NOT NULL
+);
+"""
+
+
+
 class ChatRoom:
     """A chat room with metadata and messages"""
 
@@ -83,6 +93,9 @@ class Quorum:
         if not self.db.table_exists("quorum"):
             print("Creating DB table for quorum")
             self.db.runc(DB_CREATE_QUORUM)
+        if not self.db.table_exists("auditlog"):
+            print("Creating DB table for audit log")
+            self.db.runc(DB_CREATE_AUDIT)
         # Fetch persistent records
         self.members = set([x["name"] for x in self.db.fetch("quorum", limit=0)])
 
