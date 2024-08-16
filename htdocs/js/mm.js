@@ -331,17 +331,7 @@ async function oauth_gate(func) {
 function write_creds() {
     const creds = document.getElementById('credentials');
     const username = document.getElementById('username');
-    username.innerText = prefs.credentials.name;
-    const userid = document.getElementById('userid');
-    userid.innerText = prefs.credentials.login;
-    //if (creds) creds.innerText = `Logged in as ${prefs.credentials.name} (${prefs.credentials.login}, via ${prefs.credentials.provider}). Currently ${attendees} attending (total attendance this meeeting: ${max_people}). `;
-    let logout_link = document.createElement('a');
-    logout_link.style.marginLeft = "10px";
-    logout_link.style.fontSize = "0.9rem";
-    logout_link.href = "/preferences?logout=true";
-    logout_link.innerText = "Sign out";
-    userid.appendChild(logout_link);
-
+    username.innerText = `Welcome, ${prefs.credentials.name}`;
     let counter = document.getElementById('counter');
     counter.innerText = current_people.length;
     let userlist = document.getElementById('userlist');

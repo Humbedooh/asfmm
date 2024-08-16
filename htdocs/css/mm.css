@@ -346,7 +346,7 @@ h6 {
 }
 
 
-input[type="button"] {
+input[type="button"],#navbarToggleExternalContent>a {
     margin: 6px;
     padding: 2px;
     font-size: 0.8rem;

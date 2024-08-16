@@ -3,9 +3,9 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/font-awesome.css" integrity="sha384-FckWOBo7yuyMS7In0aXZ0aoVvnInlnFMwCv77x9sZpFgOonQgnBj1uLwenWVtsEj"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"/>
     <link rel="stylesheet" href="/css/mm.css"/>
-    <link rel="stylesheet" href="/css/font-awesome.css" integrity="sha384-FckWOBo7yuyMS7In0aXZ0aoVvnInlnFMwCv77x9sZpFgOonQgnBj1uLwenWVtsEj"/>
     <title>ASF Members Meeting</title>
 </head>
 <body onload="oauth_gate(main);">
@@ -22,12 +22,21 @@
             <div class="card chat-app">
                 <div id="sidebar" class="people-list">
                     <div class="infobox">
+                        <button style="float: left; margin: 8px;" data-bs-toggle="collapse" data-mdb-button-init class="navbar-toggler" type="button"
+                                data-bs-target="#navbarToggleExternalContent">
+                            <i class="fa fa-bars"></i>
+                        </button>
                         <h6 id="username"></h6>
-                        <span id="userid"></span>
-                        <br>
-                        <input type="button" class="btn btn-primary" value="Invite a guest" id="invite" style="display: none;" onclick="invite();">
-                        <input type="button" class="btn btn-primary" value="Proxies" id="assign_proxies" style="display: none;" onclick="assign_proxies();">
-                        <input type="button" class="btn btn-info" value="Export logs" id="export" style="display: none;" onclick="window.open('/export', '_blank');">
+                        <div class="collapse" id="navbarToggleExternalContent">
+                            <div style="text-align: left; width: 270px; text-indent: 0; display: inline-block;">
+                                <input type="button" class="btn btn-primary" value="Invite a Guest" id="invite" onclick="invite();">
+                                <input type="button" class="btn btn-primary" value="Proxies" id="assign_proxies" onclick="assign_proxies();">
+                                <input type="button" class="btn btn-primary" value="Export Logs" id="export" onclick="window.open('/export', '_blank');">
+                                <input type="button" onclick="location.href='/preferences?logout=true';" class="btn btn-danger" value="Sign out">
+                                <input type="button" class="btn btn-success" value="Cheat Sheet / Help" id="cheat" onclick="$('#modal_help').show()">
+                            </div>
+                        </div>
+
                     </div>
                     <div class="infobox">
                         <div id="quorum"></div>
@@ -71,6 +80,19 @@
     <div class="modal-content">
         <span class="close">&times;</span>
         <p id="modal_text">Some text in the Modal..</p>
+    </div>
+</div>
+
+<div id="modal_help" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="$('#modal_help').hide()">&times;</span>
+        <h6>Cheat Sheet / Help</h6>
+        <p class="modal_text">
+            <ul>
+        <li>You can keep messages off-the-record by prepending [off] to them.</li>
+        <li>You can mention (notify) someone by typing <kbd>@asf-id</kbd> in your message, where asf-id is their ASF userid, for instance <kbd>@humbedooh</kbd>.</li>
+    </ul>
+        </p>
     </div>
 </div>
 
