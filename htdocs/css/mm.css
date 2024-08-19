@@ -298,15 +298,9 @@ footer {
 
 
 #userlist_wrapper {
-    display: inline-block;
-    width: calc(100% - 12px);
-    border-radius: 6px;
     height: calc(100% - 200px);
     padding: 4px;
-    vertical-align: top;
-    position: relative;
     margin: 4px;
-    overflow-y: auto;
 }
 
 h6 {
