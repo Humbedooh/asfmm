@@ -38,7 +38,7 @@ def htdocs_path(path):
 
 
 def asfmm_app():
-    app = asfquart.construct("asfmm", oauth="/oauth_asf")
+    app = asfquart.construct("asfmm", oauth="/oauth_asf", force_login=False)
     app.state = classes.State()
     # TODO: arrange this more neatly.
     from scripts import chat, export, invite, mgmt, post, proxy, preferences
