@@ -133,39 +133,48 @@ footer {
 }
 
 #action_picker li {
-    background-color: #6e797e;
-    border-radius: 3px;
-    margin: 4px;
-    padding: 4px;
+    background-color: #0003;
+    border-radius: 2px;
+    border: 1.5px inset #0006;
+    margin: 0px;
+    padding: 0px;
     font-size: 0.8rem;
     font-weight: bold;
-    box-shadow: 0 2px #FFF1;
+    box-shadow: 0 1px #FFF1;
     text-decoration: none;
     display: inline-block;
-    width: calc(100% - 20px);
-    color: white;
+    width: 100%;
+    height: 34px;
+}
+
+#action_picker li > span {
+    margin-top: -3px;
 }
 
 #action_picker a {
-
     text-decoration: none;
 }
 
 #action_picker li:hover {
-    background-color: #d2e7f1;
+    background-color: #0006;
     cursor: pointer;
 }
 
 #action_picker li[type="active"] {
     background-color: #0e90ec;
-    box-shadow: 0 2px #FFF1;
 }
 
-#action_picker li[type="active"]:hover {
-    background-color: #109cff;
+#action_picker li[type="active"] > span  {
+    font-weight: bolder;
+}
+
+#action_picker span[type="active"]:hover > span  {
     cursor: pointer;
 }
 
+#action_picker span {
+    color: white;
+}
 
 
 
