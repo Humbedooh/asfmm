@@ -283,7 +283,7 @@ async function get_preferences(formdata) {
         location.href = '/oauth_asf?provider=guest&' + formdata.toString();
         return
     }
-    if (xprefs.status === 404 && location.pathname !== "/oauth.html") {
+    if (xprefs.status === 403 && location.pathname !== "/oauth.html") {
         window.localStorage.setItem('mm_redirect', location.href);
         location.href = "/oauth.html";
         return {}
