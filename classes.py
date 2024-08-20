@@ -110,6 +110,7 @@ class State:
 
     def __init__(self):
         self.config: dict = yaml.safe_load(open("mm.yaml"))
+        self.admins = self.config.get("admins", [])
         self.cookies: typing.Optional[ahapi.session.CookieFactory] = None
         self.rooms: list = []
         self.pending_messages: dict = {}

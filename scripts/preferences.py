@@ -15,7 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ahapi
+import asfquart
+import asfquart.auth
+import asfquart.session
+import asfquart.utils
 import typing
 import aiohttp.web
 
@@ -25,20 +28,18 @@ import aiohttp.web
 def redirect(url="/"):
     return aiohttp.web.Response(status=302, headers={"Location": url}, text="Redirecting back to ASFMM...")
 
+APP = asfquart.APP
 
-async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
-    cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
-    if not cookie:
-        cookie = state.cookies.make(request, state)  # generate a new cookie, will automatically be sent to client
-        cookie.state = {"credentials": None}
+
+@APP.route("/preferences")
+@asfquart.auth.require()
+async def process() -> typing.Any:
+    formdata = await asfquart.utils.formdata()
+    session = await asfquart.session.read()
     if formdata.get("logout"):  # Logout - wipe the cookie
-        cookie.state = {}
+        asfquart.session.clear()
         return redirect()
     return {
-        "credentials": cookie.state.get("credentials"),
-        "admin": cookie.state.get("admin"),
+        "credentials": dict(session),
+        "admin": session.uid in APP.state.admins
     }
-
-
-def register(state: typing.Any):
-    return ahapi.endpoint(process)

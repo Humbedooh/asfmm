@@ -14,51 +14,55 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import ahapi
+import asfquart
+import asfquart.auth
+import asfquart.session
+import asfquart.utils
 import typing
 import uuid
 import time
 
 """Management end point for ASFMM"""
 
+APP = asfquart.APP
 
-async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
-    cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
-    if not cookie or not cookie.state:
-        return {"success": False, "message": "Oops, something went terribly wrong here!"}
 
-    if not cookie.state.get("admin"):
+@APP.route("/mgmt", methods=["POST"])
+@asfquart.auth.require()
+async def process_mgmt() -> typing.Any:
+    session = await asfquart.session.read()
+    if session.uid not in APP.state.admins:
         return {"success": False, "message": "You need administrative powers for this..."}
+    formdata = await asfquart.utils.formdata()
     action = formdata.get("action")
     if action == "block":
         who = formdata.get("user")
-        if who and who not in state.blocked:
-            state.blocked.append(who)
+        if who and who not in APP.state.blocked:
+            APP.state.blocked.append(who)
         return {
             "success": True,
             "message": f"User {who} blocked",
         }
     elif action == "ban":
         who = formdata.get("user")
-        if who and who not in state.banned:
-            state.banned.append(who)
+        if who and who not in APP.state.banned:
+            APP.state.banned.append(who)
         return {
             "success": True,
             "message": f"User {who} banned",
         }
     elif action == "unblock":
         who = formdata.get("user")
-        if who and who in state.blocked:
-            state.blocked.remove(who)
+        if who and who in APP.state.blocked:
+            APP.state.blocked.remove(who)
         return {
             "success": True,
             "message": f"User {who} unblocked",
         }
     elif action == "unban":
         who = formdata.get("user")
-        if who and who in state.banned:
-            state.banned.remove(who)
+        if who and who in APP.state.banned:
+            APP.state.banned.remove(who)
         return {
             "success": True,
             "message": f"User {who} unbanned",
@@ -66,18 +70,15 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     elif action == "redact":
         msgid = formdata.get("msgid")
         if msgid:
-            for room in state.rooms:
+            for room in APP.state.rooms:
                 msg = None
                 for message in room.messages:
                     if message["uid"] == msgid:
                         msg = message
+                        break
                 if msg:
                     room.messages.remove(msg)
         return {
             "success": True,
             "message": f"Message redacted from records",
         }
-
-
-def register(state: typing.Any):
-    return ahapi.endpoint(process)

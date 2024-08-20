@@ -15,9 +15,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ahapi
+import asfquart
+import asfquart.auth
+import asfquart.session
+import asfquart.utils
 import typing
-import aiohttp.web
+import quart
 import asyncio
 import time
 import uuid
@@ -27,28 +30,25 @@ import math
 
 WEBSOCKET_TIMEOUT = 10  # After 10 seconds of no activity, we consider someone signed out.
 
+APP = asfquart.APP
 
-async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
-    cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
-    if not cookie or not cookie.state or not "credentials" in cookie.state:
-        return {
-            "success": False,
-            "message": "Please authenticate first!",
-        }
-    ws = aiohttp.web.WebSocketResponse(timeout=WEBSOCKET_TIMEOUT)
-    await ws.prepare(request)
-    whoami = cookie.state["credentials"]["login"]
-    if whoami in state.banned:  # If banned, break and don't send messages at all
+
+@APP.websocket("/chat")
+@asfquart.auth.require
+async def process_chat() -> typing.Any:
+    session = await asfquart.session.read()
+    whoami = session.uid
+    if whoami in APP.state.banned:  # If banned, break and don't send messages at all
         return {}
     hashuid = uuid.uuid4()
-    state.pending_messages[hashuid] = []
+    APP.state.pending_messages[hashuid] = []
     try:
         # Init some vars for tracking
         pongometer = 0
         last_user_list = set()
         # All history first
-        for room in state.rooms:
-            await ws.send_json(
+        for room in APP.state.rooms:
+            await quart.websocket.send_json(
                 {
                     "room_data": {
                         "id": room.name,
@@ -58,7 +58,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                 }
             )
             for message in room.messages:
-                await ws.send_json(
+                await quart.websocket.send_json(
                     {
                         "msgid": message["uid"],
                         "timestamp": message["timestamp"],
@@ -69,14 +69,14 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                     }
                 )
         # Now iterate over any new incoming messages, as well as status updates
-        while not ws.closed:
-            if whoami in state.banned:  # If banned, break and don't send messages at all
+        while True:
+            if whoami in APP.state.banned:  # If banned, break and don't send messages at all
                 return {}
-            if len(state.pending_messages[hashuid]):
-                to_send = state.pending_messages[hashuid].copy()  # copy to prevent race condition
-                state.pending_messages[hashuid].clear()  # clear, so next iteration we only get new messages
+            if len(APP.state.pending_messages[hashuid]):
+                to_send = APP.state.pending_messages[hashuid].copy()  # copy to prevent race condition
+                APP.state.pending_messages[hashuid].clear()  # clear, so next iteration we only get new messages
                 for message in to_send:
-                    await ws.send_json(
+                    await quart.websocket.send_json(
                         {
                             "msgid": message["uid"],
                             "timestamp": message["timestamp"],
@@ -86,31 +86,31 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                             "message": message["message"],
                         }
                     )
-            state.attendees[whoami] = time.time()
+            APP.state.attendees[whoami] = time.time()
             if pongometer % 10 == 0:
                 currently_attending = set()
-                for k, v in state.attendees.items():
+                for k, v in APP.state.attendees.items():
                     if v >= time.time() - WEBSOCKET_TIMEOUT:
                         currently_attending.add(k)
                 # If user list has changed, or we've waited 7.5 seconds, re-send user list and statuses
                 if last_user_list != currently_attending or pongometer % 30 == 0:
                     last_user_list = currently_attending
                     statuses = {}
-                    if cookie.state.get("admin"):
+                    if session.uid in APP.state.admins:
                         statuses = {
-                            "blocked": state.blocked,
-                            "banned": state.banned,
+                            "blocked": APP.state.blocked,
+                            "banned": APP.state.banned,
                         }
-                    await ws.send_json(
+                    await quart.websocket.send_json(
                         {
                             "pong": str(uuid.uuid4()),
                             "statuses": statuses,
                             "current": list(currently_attending),
                             "attendees": len(currently_attending),
-                            "max": len(state.attendees),
+                            "max": len(APP.state.attendees),
                             "quorum": {
-                                "required": math.ceil(len(state.members)/3),
-                                "present": list(state.quorum.members),
+                                "required": math.ceil(len(APP.state.members)/3),
+                                "present": list(APP.state.quorum.members),
                             }
                         }
                     )
@@ -118,9 +118,5 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
             await asyncio.sleep(0.25)
     except asyncio.exceptions.CancelledError:
         pass
-    del state.pending_messages[hashuid]
+    del APP.state.pending_messages[hashuid]
     return {}
-
-
-def register(state: typing.Any):
-    return ahapi.endpoint(process)
