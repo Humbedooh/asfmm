@@ -15,7 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ahapi
+import asfquart
+import asfquart.auth
+import asfquart.session
+import asfquart.utils
 import typing
 import aiohttp.web
 import urllib.parse
@@ -24,22 +27,23 @@ import time
 
 """OAuth end point for ASFMM"""
 
+APP = asfquart.APP
+
 
 def redirect(url):
     return aiohttp.web.Response(status=302, headers={"Location": url}, text="Redirecting back to MM...")
 
 
-async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
-    cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
-    if not cookie:
-        return {"success": False, "message": "Oops, something went terribly wrong here!"}
+@APP.route("/oauth")
+async def process() -> typing.Any:
+    formdata = await asfquart.utils.formdata()
     provider = formdata.get("provider")
     step = formdata.get("step", "init")
 
     # ASF Oauth
     if provider == "asf":
         if step == "init":
-            cb = state.config["oauth"]["asf"]["callback_url"]
+            cb = APP.state.config["oauth"]["asf"]["callback_url"]
             callback_url = urllib.parse.quote(cb)
             uid = str(uuid.uuid4())
             return redirect(f"https://oauth.apache.org/auth?state={uid}&redirect_uri={callback_url}")
@@ -53,41 +57,40 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
                     response = await rv.json()
                     messages: list = []
                     msghash = uuid.uuid4()
-                    cookie.state = {
+                    new_session = {
                         "credentials": {
                             "login": response["uid"],
                             "name": response["fullname"],
                             "provider": "Apache OAuth",
                         },
                         "pending_messages": messages,
-                        "admin": response["uid"] in state.config["admins"],
+                        "admin": response["uid"] in APP.state.config["admins"],
                     }
+                    await asfquart.session.write(new_session)
                     # Update quorum if member
-                    if response["uid"] in state.members:
-                        state.quorum.add(response["uid"])
-                        state.db.insert("auditlog", {"uid": response["uid"], "timestamp": time.time(), "action": f"logged in via {cookie.state['credentials']['provider']}"})
+                    if response["uid"] in APP.state.members:
+                        APP.state.quorum.add(response["uid"])
+                        APP.state.db.insert("auditlog", {"uid": response["uid"], "timestamp": time.time(), "action": f"logged in via {new_session['credentials']['provider']}"})
                     return redirect("/")
     elif provider == "guest":
         code = formdata.get("code")
-        if code and code in state.invites:
+        if code and code in APP.state.invites:
             guest_prefix = 1
-            for attendee in state.attendees.keys():
+            for attendee in APP.state.attendees.keys():
                 if attendee.startswith("guest_"):
                     guest_prefix += 1
-            cookie.state = {
+            new_session = {
                 "credentials": {
-                    "login": "guest_" + str(guest_prefix) + "/" + state.invites[code]["inviter"],
-                    "name": state.invites[code]["name"],
+                    "uid": "guest_" + str(guest_prefix) + "/" + APP.state.invites[code]["inviter"],
+                    "fullname": APP.state.invites[code]["name"],
                     "provider": "Invite Code",
                 },
                 "admin": False,
                 "pending_messages": [],
             }
-            del state.invites[code]
+            await asfquart.session.write(new_session)
+            del APP.state.invites[code]
             return redirect("/")
         else:
             return "Could not find invite code. It may have already been used."
 
-
-def register(state: typing.Any):
-    return ahapi.endpoint(process)

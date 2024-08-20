@@ -15,43 +15,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ahapi
+import asfquart
+import asfquart.auth
+import asfquart.session
+import asfquart.utils
 import typing
 import time
 
 """Proxy assignment end point for ASFMM"""
 
+APP = asfquart.APP
 
-async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
-    cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
-    if not cookie or not cookie.state or not cookie.state.get("credentials"):
-        return {"success": False, "message": "Oops, something went terribly wrong here!"}
 
-    whoami = cookie.state["credentials"]["login"]
+@APP.route("/proxy", methods=["POST"])
+@asfquart.auth.require()
+async def process_proxy() -> typing.Any:
+    session = await asfquart.session.read()
+    formdata = await asfquart.utils.formdata()
+    whoami = session.uid
     if whoami.startswith("guest_"):
         return {"success": False, "message": "Guests cannot assign proxies"}
 
     assigned = set()
     invalid = set()
     for member in formdata.get("members"):
-        if member and member in state.members:
-            state.quorum.add(member)
+        if member and member in APP.state.members:
+            APP.state.quorum.add(member)
             assigned.add(member)
         elif member:
             invalid.add(member)
     if not invalid:
-        state.db.insert("auditlog", {"uid": whoami, "timestamp": time.time(), "action": f"added the following {len(assigned)} proxies: {', '.join(list(assigned))}"})
+        APP.state.db.insert("auditlog", {"uid": whoami, "timestamp": time.time(), "action": f"added the following {len(assigned)} proxies: {', '.join(list(assigned))}"})
         return {
             "success": True,
             "message": f"{len(assigned)} proxies assigned to you: " + ", ".join(list(assigned))
         }
     else:
-        state.db.insert("auditlog", {"uid": whoami, "timestamp": time.time(), "action": f"added the following {len(assigned)} proxies: {', '.join(list(assigned))}. The following {len(invalid)} invalid proxies were present: {', '.join(list(invalid))}"})
+        APP.state.db.insert("auditlog", {"uid": whoami, "timestamp": time.time(), "action": f"added the following {len(assigned)} proxies: {', '.join(list(assigned))}. The following {len(invalid)} invalid proxies were present: {', '.join(list(invalid))}"})
         return {
             "success": True,
             "message": f"{len(assigned)} proxies assigned to you: " + ", ".join(list(assigned)) + f"\n{len(invalid)} proxies were invalid or already assigned: " + ", ".join(list(invalid))
         }
-
-
-def register(state: typing.Any):
-    return ahapi.endpoint(process)

@@ -1,0 +1,13 @@
+[Unit]
+Description=ASF Members Meeting Chat
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/asfmm/
+ExecStart=/usr/local/bin/pipenv run python3 -m hypercorn main:app
+Restart=always
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target

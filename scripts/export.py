@@ -15,22 +15,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ahapi
+import asfquart
+import asfquart.auth
+import asfquart.session
+import asfquart.utils
+import quart
 import typing
 import tarfile
 import io
-import aiohttp.web
 import time
 
 """Data export end point for ASFMM"""
 
 
-async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
-    cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
-    if not cookie or not cookie.state or not cookie.state.get("credentials"):
-        return {"success": False, "message": "Oops, something went terribly wrong here!"}
+APP = asfquart.APP
 
-    whoami = cookie.state["credentials"]["login"]
+
+@APP.route("/export")
+@asfquart.auth.require()
+async def process_export() -> typing.Any:
+    session = await asfquart.session.read()
+    whoami = session.uid
     if whoami.startswith("guest_"):
         return {"success": False, "message": "Guests cannot export data"}
 
@@ -38,14 +43,14 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     tar = tarfile.open(mode="w:gz", fileobj=out)
 
     # Export attendance
-    attendance = "\n".join(state.quorum.members).encode('utf-8')
+    attendance = "\n".join(APP.state.quorum.members).encode('utf-8')
     file = io.BytesIO(attendance)
     info = tarfile.TarInfo(name="attendance.txt")
     info.size = len(attendance)
     tar.addfile(tarinfo=info, fileobj=file)
 
     # Export proxy attendance (quorum minus in-person attendance)
-    proxy_attendance = "\n".join([x for x in state.quorum.members if x not in state.attendees.keys()]).encode('utf-8')
+    proxy_attendance = "\n".join([x for x in APP.state.quorum.members if x not in APP.state.attendees.keys()]).encode('utf-8')
     file = io.BytesIO(proxy_attendance)
     info = tarfile.TarInfo(name="proxies-counted.txt")
     info.size = len(proxy_attendance)
@@ -53,7 +58,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
 
     # Export audit log
     auditlog = ""
-    for row in state.db.fetch("auditlog", limit=0):
+    for row in APP.state.db.fetch("auditlog", limit=0):
         auditlog += f"[{time.ctime(row['timestamp'])}] {row ['uid']} {row['action']}\n"
     auditlog = auditlog.encode('utf-8')
     file = io.BytesIO(auditlog)
@@ -62,7 +67,7 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     tar.addfile(tarinfo=info, fileobj=file)
 
     # Export chat logs
-    for room in state.rooms:
+    for room in APP.state.rooms:
         logfile = ""
         for message in room.messages:
             for line in message["message"].split("\n"):
@@ -80,9 +85,5 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
         'Content-Disposition': 'attachment; filename=asfmm.tgz',
         "Content-Type": 'application/tgz'
     }
-    response = aiohttp.web.Response(headers=headers, body=out.getvalue())
+    response = quart.Response(out.getvalue(), headers=headers)
     return response
-
-
-def register(state: typing.Any):
-    return ahapi.endpoint(process)

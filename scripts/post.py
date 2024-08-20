@@ -15,29 +15,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ahapi
+import asfquart
+import asfquart.auth
+import asfquart.session
+import asfquart.utils
 import typing
 import time
 
 """Post end point for MM"""
 
 
-async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
-    cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
-    if not cookie:
+
+APP = asfquart.APP
+
+
+@APP.route("/post", methods=["POST"])
+@asfquart.auth.require()
+async def process_post() -> typing.Any:
+    session = await asfquart.session.read()
+    formdata = await asfquart.utils.formdata()
+    if not session:
         return {"success": False, "message": "Oops, something went terribly wrong here!"}
 
-    sender = cookie.state["credentials"]["login"]
-    realname = cookie.state["credentials"]["name"]
+    sender = session.uid
+    realname = session.fullname
     message = formdata.get("message")
     roomname = formdata.get("room")
-    if sender in state.blocked or sender in state.banned:
+    if sender in APP.state.blocked or sender in APP.state.banned:
         return {
             "success": False,
             "message": "You appear to be blocked from sending messages",
         }
-    throttle_max = state.config.get("message_rate_limit", 5)
-    for room in state.rooms:
+    throttle_max = APP.state.config.get("message_rate_limit", 5)
+    for room in APP.state.rooms:
         if room.name == roomname:
             if len(room.flood_control) >= throttle_max and room.flood_control[-throttle_max] >= time.time()-1:
                 return {
@@ -58,6 +68,3 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
         "message": "Could not find room!",
     }
 
-
-def register(state: typing.Any):
-    return ahapi.endpoint(process)

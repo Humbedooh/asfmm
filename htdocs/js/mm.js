@@ -15,48 +15,36 @@
  limitations under the License.
  */
 
-async function METHOD(method, url, data) {
-    let payload = {
-        method: method,
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: data ? {
-            'Content-Type': 'application/json'
-        } : {},
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer'
-    }
-    if (data) {
-        payload.body = JSON.stringify(data);
-    }
-    try {
-        const response = await fetch(url, payload).catch( (e) => {
-            throw e
-        });
-        if (response.ok !== true) {
-            let body = await response.text();
-            return {
-                "okay": false,
-                "message": `HTTP Error ${response.status}: ${response.statusText} ${body}`
-            }
-        }
-        let js = await response.json();
-        return js
-    } catch (e) {
-        return {
-            "okay": false,
-            "message": e
-        }
-    }
+function toFormData(params) {
+    if (!params) return null; // No form data? Return null then.
+    if (params instanceof FormData) return params; // Already a FormData object? Just return it then.
+    if (params instanceof File) return params; // A File object will also suffice for Fetch.
+    // Otherwise, construct from dictionary and return.
+    const fd = new FormData();
+    Object.entries(params).forEach(([key, value]) => fd.append(key, value));
+    return fd;
+}
+
+
+async function METHOD(method = "GET", url, params={}) {
+    const parameters = params || {}; // We want a dict here
+    const headers = new Headers();
+    if (parameters.json) headers.append('Content-Type', 'application/json');
+    const data = parameters.json ? JSON.stringify(parameters.json) : toFormData(parameters.data);
+    const response = await fetch(url, {
+        method,
+        headers,
+        body: data,
+    });
+    return response;
 }
 
 // HTTP methods
 let DELETE = (url, data) => METHOD('DELETE', url, data);
 let GET = (url, data) => METHOD('GET', url, data);
 let PATCH = (url, data) => METHOD('PATCH', url, data);
-let POST = (url, data) => METHOD('POST', url, data);
-let PUT = (url, data) => METHOD('PUT', url, data);
+let POST = (url, data) => METHOD('POST', url, {json: data});
+let PUT = (url, data) => METHOD('PUT', url, {json: data});
 
 /* Turns links into...links */
 function fixup_urls(splicer) {
@@ -292,10 +280,10 @@ let nicks = [];
 async function get_preferences(formdata) {
     const xprefs = await GET("/preferences");
     if (formdata.get("action") == 'invite') {
-        location.href = '/oauth?provider=guest&' + formdata.toString();
+        location.href = '/oauth_asf?provider=guest&' + formdata.toString();
         return
     }
-    if (xprefs.credentials === null && location.pathname !== "/oauth.html") {
+    if (xprefs.status === 404 && location.pathname !== "/oauth.html") {
         window.localStorage.setItem('mm_redirect', location.href);
         location.href = "/oauth.html";
         return {}
@@ -319,7 +307,11 @@ function notify(room, sender, message) {
 async function oauth_gate(func) {
     const form_data = new URLSearchParams(location.search);
     prefs = await get_preferences(form_data);
-    if (prefs && prefs.credentials) {
+    if (prefs.status === 404) {
+
+    }
+    else {
+        prefs = await prefs.json();
         await func(form_data);
     }
 }
@@ -328,7 +320,7 @@ async function oauth_gate(func) {
 function write_creds() {
     const creds = document.getElementById('credentials');
     const username = document.getElementById('username');
-    username.innerText = `Welcome, ${prefs.credentials.name}`;
+    username.innerText = `Welcome, ${prefs.credentials.fullname}`;
     let counter = document.getElementById('counter');
     counter.innerText = current_people.length;
     let userlist = document.getElementById('userlist');
@@ -338,7 +330,7 @@ function write_creds() {
     }
     for (let user of current_people) {
         let udiv = new HTML('li', {}, user);
-        if (prefs.admin && user !== prefs.credentials.login) {
+        if (prefs.admin && user !== prefs.credentials.uid) {
             // muted user
             if (prefs.statuses.blocked.has(user)) {
                 udiv.style.color = 'grey';
@@ -361,13 +353,13 @@ function write_creds() {
             }
 
         }
-        if (user === prefs.credentials.login) {
+        if (user === prefs.credentials.uid) {
             udiv.innerText += " (You)";
         }
         userlist.inject(udiv);
     }
     // non-guests can invite others
-    if (!prefs.credentials.login.startsWith("guest")) {
+    if (!prefs.credentials.uid.startsWith("guest")) {
         document.getElementById('invite').style.display = 'block';
         document.getElementById('assign_proxies').style.display = 'block';
     }
@@ -399,7 +391,8 @@ async function block_user(who) {
         user: who
     });
     prefs.statuses['blocked'].push(who);
-    alert(resp.message);
+    let rv = await resp.json();
+    alert(rv.message)
     write_creds();
 }
 
@@ -409,7 +402,8 @@ async function ban_user(who) {
         user: who
     });
     prefs.statuses['banned'].push(who);
-    alert(resp.message);
+    let rv = await resp.json();
+    alert(rv.message)
     write_creds();
 }
 
@@ -419,7 +413,8 @@ async function unblock_user(who) {
         user: who
     });
     prefs.statuses['blocked'].remove(who);
-    alert(resp.message);
+    let rv = await resp.json();
+    alert(rv.message)
     write_creds();
 }
 
@@ -429,7 +424,8 @@ async function unban_user(who) {
         user: who
     });
     prefs.statuses['banned'].remove(who);
-    alert(resp.message);
+    let rv = await resp.json();
+    alert(rv.message)
     write_creds();
 }
 
@@ -514,7 +510,8 @@ async function send_proxies() {
         members: proxies
     });
     let text = document.getElementById('modal_text');
-    text.innerText = resp.message
+    let rv = await resp.json();
+    text.innerText = rv.message
 }
 
 
@@ -530,7 +527,7 @@ async function chat() {
     wscon = new WebSocket(prot + location.hostname + port + '/chat');
     // Connection killed
     wscon.addEventListener('close', function (event) {
-        location.reload();
+        //location.reload();
     });
 
     wscon.addEventListener('error', function (event) {
@@ -638,8 +635,9 @@ async function chat() {
 
 async function redact(msgid) {
     const resp = await POST("/mgmt", {action: 'redact', msgid: msgid});
-    alert(resp.message);
-    if (resp.success) document.getElementById(msgid).parentNode.removeChild(document.getElementById(msgid));
+    let rv = await resp.json();
+    alert(rv.message);
+    if (rv.success) document.getElementById(msgid).parentNode.removeChild(document.getElementById(msgid));
 }
 
 async function check_send(el, force=false) {
@@ -681,13 +679,14 @@ async function check_send(el, force=false) {
             room: current_room,
             message: message
         });
-        if (resp.success) {
+        if (resp.status === 200) {
         } else {
-            el.value = message;
-            alert(resp.message);
+            rv = await resp.json();
+            el.value = rv.message;
         }
     }
 }
+
 
 function mkchannel(chan) {
     let channeldiv = document.getElementById('channel_' + chan);
@@ -732,13 +731,15 @@ function show_channel(chan) {
     for (let room of rooms) {
         let li = new HTML('li');
         let a = new HTML('a', { href: "javascript:void(show_channel('" + room.id + "'))"});
+        let span = new HTML('span');
         a.appendChild(li);
-        li.innerText = room.title;
-        li.className = "btn";
+        span.innerText = room.title;
+        span.className = "btn";
         let unreads = new HTML('span', {class: 'badge bg-primary badge-pad'});
         unreads.setAttribute('id', 'unread_' + room.id);
         if (room.unread) unreads.innerText = room.unread;
-        li.appendChild(unreads);
+        span.appendChild(unreads);
+        li.appendChild(span);
         chanpicker.appendChild(a);
         if (room.id != current_room) {
             li.setAttribute('type', 'inactive');
