@@ -33,7 +33,7 @@ APP = asfquart.APP
 
 @APP.route("/preferences")
 @asfquart.auth.require()
-async def process() -> typing.Any:
+async def process_prefs() -> typing.Any:
     formdata = await asfquart.utils.formdata()
     session = await asfquart.session.read()
     if formdata.get("logout"):  # Logout - wipe the cookie

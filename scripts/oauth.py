@@ -35,7 +35,7 @@ def redirect(url):
 
 
 @APP.route("/oauth")
-async def process() -> typing.Any:
+async def process_oauth() -> typing.Any:
     formdata = await asfquart.utils.formdata()
     provider = formdata.get("provider")
     step = formdata.get("step", "init")

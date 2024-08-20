@@ -29,7 +29,7 @@ APP = asfquart.APP
 
 @APP.route("/invite", methods=["POST", "GET"])
 @asfquart.auth.require()
-async def process() -> typing.Any:
+async def process_invite() -> typing.Any:
     session = await asfquart.session.read()
     formdata = await asfquart.utils.formdata()
     invitee = formdata.get("name")
