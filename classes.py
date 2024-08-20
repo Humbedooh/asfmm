@@ -22,7 +22,6 @@ import typing
 import asfpy.sqlite
 import uuid
 import yaml
-import ahapi.session
 import requests
 
 DB_CREATE_MESSAGES = """
@@ -111,7 +110,6 @@ class State:
     def __init__(self):
         self.config: dict = yaml.safe_load(open("mm.yaml"))
         self.admins = self.config.get("admins", [])
-        self.cookies: typing.Optional[ahapi.session.CookieFactory] = None
         self.rooms: list = []
         self.pending_messages: dict = {}
         self.attendees: dict = {}
