@@ -15,24 +15,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ahapi
+import asfquart
+import asfquart.auth
+import asfquart.generics
+import asfquart.session
 import typing
 import uuid
 import time
 
 """Invitation end point for ASFMM"""
 
+APP = asfquart.APP
 
-async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
-    cookie = state.cookies.get(request)  # Fetches a valid session or None if not found
-    if not cookie:
-        return {"success": False, "message": "No user session found, cannot continue with request."}
+@APP.route("/invite", methods=["POST", "GET"])
+@asfquart.auth.require()
+async def process() -> typing.Any:
+    session = await asfquart.session.read()
+    formdata = await asfquart.utils.formdata()
     invitee = formdata.get("name")
-    sender = cookie.state["credentials"]["login"]
+    sender = session.uid
     if not invitee or sender.startswith("guest_") or sender in state.banned:
         return {"success": False, "message": "Oops, something went terribly wrong here!"}
 
-    realname = cookie.state["credentials"]["name"]
+    realname = session.fullname
 
     invite_id = str(uuid.uuid4())
     state.invites[invite_id] = {
@@ -44,9 +49,6 @@ async def process(state: typing.Any, request, formdata: dict) -> typing.Any:
     return {
         "success": True,
         "message": "Invite created",
-        "url": state.config["oauth"]["asf"]["invite_url"] + invite_id,
+        "url": APP.state.config["oauth"]["asf"]["invite_url"] + invite_id,
     }
 
-
-def register(state: typing.Any):
-    return ahapi.endpoint(process)
