@@ -51,8 +51,13 @@ def asfmm_app():
             return await quart.send_from_directory("htdocs", disk_path)
 
 
-    app.run(port=8080)
+    return app
 
 
+# python3 server.py (runs Quart debug server)
 if __name__ == "__main__":
-    asfmm_app()
+    app = asfmm_app()
+    app.run(port=8080)
+else:
+    # Hypercorn or some other ASGI server
+    app = asfmm_app()
