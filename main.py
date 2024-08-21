@@ -41,7 +41,7 @@ def asfmm_app():
     app = asfquart.construct("asfmm", oauth="/oauth_asf", force_login=False)
     app.state = classes.State()
     # TODO: arrange this more neatly.
-    from scripts import chat, export, invite, mgmt, post, proxy, preferences
+    from scripts import chat, export, invite, mgmt, post, proxy, preferences, oauth
 
     # Static files (or index.html if requesting a dir listing)
     @app.route("/<path:path>")
