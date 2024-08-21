@@ -527,7 +527,10 @@ async function chat() {
     wscon = new WebSocket(prot + location.hostname + port + '/chat');
     // Connection killed
     wscon.addEventListener('close', function (event) {
-        //location.reload();
+        if (!event.wasClean) {
+            alert("Connection was lost, reconnecting..!");
+            location.reload();
+        }
     });
 
     wscon.addEventListener('error', function (event) {
