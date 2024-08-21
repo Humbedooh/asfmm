@@ -15,14 +15,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import quart
 import asfquart
 import asfquart.auth
 import asfquart.session
 import asfquart.utils
 import typing
-import aiohttp.web
-import urllib.parse
-import uuid
 import time
 
 """OAuth end point for ASFMM"""
@@ -31,7 +29,7 @@ APP = asfquart.APP
 
 
 def redirect(url):
-    return aiohttp.web.Response(status=302, headers={"Location": url}, text="Redirecting back to MM...")
+    return quart.Response("Redirecting back to ASFMM...", status=302, headers={"Location": url})
 
 
 @APP.route("/oauth")
@@ -39,39 +37,14 @@ async def process_oauth() -> typing.Any:
     formdata = await asfquart.utils.formdata()
     provider = formdata.get("provider")
     step = formdata.get("step", "init")
-
     # ASF Oauth
     if provider == "asf":
-        if step == "init":
-            cb = APP.state.config["oauth"]["asf"]["callback_url"]
-            callback_url = urllib.parse.quote(cb)
-            uid = str(uuid.uuid4())
-            return redirect(f"https://oauth.apache.org/auth?state={uid}&redirect_uri={callback_url}")
-        elif step == "callback":
-            async with aiohttp.ClientSession() as session:
-                # Grab data
-                headers = {
-                    "Accept": "application/json",
-                }
-                async with session.post("https://oauth.apache.org/token", headers=headers, data=formdata) as rv:
-                    response = await rv.json()
-                    messages: list = []
-                    msghash = uuid.uuid4()
-                    new_session = {
-                        "credentials": {
-                            "login": response["uid"],
-                            "name": response["fullname"],
-                            "provider": "Apache OAuth",
-                        },
-                        "pending_messages": messages,
-                        "admin": response["uid"] in APP.state.config["admins"],
-                    }
-                    await asfquart.session.write(new_session)
-                    # Update quorum if member
-                    if response["uid"] in APP.state.members:
-                        APP.state.quorum.add(response["uid"])
-                        APP.state.db.insert("auditlog", {"uid": response["uid"], "timestamp": time.time(), "action": f"logged in via {new_session['credentials']['provider']}"})
-                    return redirect("/")
+        if step == "callback":
+            session = await asfquart.session.read()
+            if session and session.uid in APP.state.members:
+                APP.state.quorum.add(session.uid)
+                APP.state.db.insert("auditlog", {"uid": session.uid, "timestamp": time.time(), "action": f"logged in via ASF OAuth"})
+                return redirect("/")
     elif provider == "guest":
         code = formdata.get("code")
         if code and code in APP.state.invites:
