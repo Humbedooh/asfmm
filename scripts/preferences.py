@@ -20,13 +20,13 @@ import asfquart.auth
 import asfquart.session
 import asfquart.utils
 import typing
-import aiohttp.web
+import quart
 
 """ Preferences endpoint for ASFMM """
 
 
 def redirect(url="/"):
-    return aiohttp.web.Response(status=302, headers={"Location": url}, text="Redirecting back to ASFMM...")
+    return quart.Response("Redirecting back to ASFMM...", status=302, headers={"Location": url})
 
 APP = asfquart.APP
 
