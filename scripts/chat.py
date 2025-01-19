@@ -110,7 +110,9 @@ async def process_chat() -> typing.Any:
                             "max": len(APP.state.attendees),
                             "quorum": {
                                 "required": math.ceil(len(APP.state.members)/3),
-                                "present": list(APP.state.quorum.members),
+                                "present": APP.state.quorum.members,
+                                "attendees": APP.state.quorum.attendees,
+                                "proxies": APP.state.quorum.proxies
                             }
                         }
                     )

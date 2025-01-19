@@ -367,12 +367,12 @@ function write_creds() {
         let quorum = document.getElementById('quorum');
         quorum.style.display = 'block';
         quorum.className = 'bg-success';
-        quorum.innerText = `Quorum reached. ${prefs.quorum.present.length} members out of a required ${prefs.quorum.required} accounted for.`;
+        quorum.innerText = `Quorum reached. ${prefs.quorum.present.length} members accounted for (A: ${prefs.quorum.attendees.length}, P: ${prefs.quorum.proxies.length}). Quorum requirement: ${prefs.quorum.required} .`;
     } else if (prefs.quorum) {
         let quorum = document.getElementById('quorum');
         quorum.style.display = 'block';
         quorum.className = 'bg-danger';
-        quorum.innerText = `Quorum not yet reached. ${prefs.quorum.present.length} out of a required ${prefs.quorum.required} members present.`;
+        quorum.innerText = `Quorum not yet reached. Required count: ${prefs.quorum.required} members. Currently ${prefs.quorum.present.length} (A: ${prefs.quorum.attendees.length}, P: ${prefs.quorum.proxies.length}).`;
     }
     nicks.splice(0,nicks.length);
     for (let nick of current_people) {

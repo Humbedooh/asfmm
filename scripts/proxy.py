@@ -40,7 +40,7 @@ async def process_proxy() -> typing.Any:
     invalid = set()
     for member in formdata.get("members"):
         if member and member in APP.state.members:
-            APP.state.quorum.add(member)
+            APP.state.quorum.add_proxy(member)
             assigned.add(member)
         elif member:
             invalid.add(member)

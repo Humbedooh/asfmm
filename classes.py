@@ -38,7 +38,8 @@ CREATE TABLE "messages" (
 
 DB_CREATE_QUORUM = """
 CREATE TABLE "quorum" (
-    "name" TEXT NOT NULL
+    "name" TEXT NOT NULL,
+    "type" TEXT NOT NULL
 );
 """
 
@@ -96,12 +97,35 @@ class Quorum:
             print("Creating DB table for audit log")
             self.db.runc(DB_CREATE_AUDIT)
         # Fetch persistent records
-        self.members = set([x["name"] for x in self.db.fetch("quorum", limit=0)])
+        self._attendees = set([x["name"] for x in self.db.fetch("quorum", limit=0, type="attendee")])
+        self._proxies = set([x["name"] for x in self.db.fetch("quorum", limit=0, type="proxy")])
+
+    @property
+    def members(self):
+        """Returns the whole list of people in quorum"""
+        return list(self._attendees.union(self._proxies))
+
+    @property
+    def attendees(self):
+        """Returns the list of attendees, sans proxies that haven't attended in person"""
+        return list(self._attendees)
+
+    @property
+    def proxies(self):
+        """Returns the list of proxies, sans people that attend in person"""
+        return list(self._proxies - self._attendees)
 
     def add(self, member: str):
+        if member and member not in self._attendees:
+            self._attendees.add(member)  # Add in memory
+            self._proxies.discard(member)  # Remove from proxy list if found
+            self.db.insert("quorum", {"name": member, "type": "attendee"})  # Add to persistent DB
+
+    def add_proxy(self, member: str):
         if member and member not in self.members:
-            self.members.add(member)  # Add in memory
-            self.db.insert("quorum", {"name": member})  # Add to persistent DB
+            self._proxies.add(member)  # Add in memory
+            self.db.insert("quorum", {"name": member, "type": "proxy"})  # Add to persistent DB
+
 
 
 class State:
