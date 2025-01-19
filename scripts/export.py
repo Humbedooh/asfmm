@@ -50,7 +50,7 @@ async def process_export() -> typing.Any:
     tar.addfile(tarinfo=info, fileobj=file)
 
     # Export proxy attendance (quorum minus in-person attendance)
-    proxy_attendance = "\n".join([x for x in APP.state.quorum.members if x not in APP.state.attendees.keys()]).encode('utf-8')
+    proxy_attendance = "\n".join([x for x in APP.state.quorum.proxies]).encode('utf-8')
     file = io.BytesIO(proxy_attendance)
     info = tarfile.TarInfo(name="proxies-counted.txt")
     info.size = len(proxy_attendance)
