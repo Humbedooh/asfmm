@@ -433,7 +433,7 @@ async function unban_user(who) {
 async function invite() {
     let name = window.prompt("Please enter the full name of the person you wish to invite");
     if (name && name.length) {
-        let resp = await POST("/invite", {name: name});
+        let resp = await (await POST("/invite", {name: name})).json();
         if (resp && resp.success) {
             show_invite(resp.url, name);
         }
@@ -449,7 +449,7 @@ function show_invite(url, name) {
         modal.style.display = "none";
     }
     window.onclick = function(event) {
-        if (event.target == modal) {
+        if (event.target === modal) {
             modal.style.display = "none";
         }
     }
