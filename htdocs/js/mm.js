@@ -280,7 +280,7 @@ let nicks = [];
 async function get_preferences(formdata) {
     const xprefs = await GET("/preferences");
     if (formdata.get("action") == 'invite') {
-        location.href = '/oauth_asf?provider=guest&' + formdata.toString();
+        location.href = '/oauth?provider=guest&' + formdata.toString();
         return
     }
     if (xprefs.status === 403 && location.pathname !== "/oauth.html") {
