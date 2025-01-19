@@ -53,13 +53,9 @@ async def process_oauth() -> typing.Any:
                 if attendee.startswith("guest_"):
                     guest_prefix += 1
             new_session = {
-                "credentials": {
-                    "uid": "guest_" + str(guest_prefix) + "/" + APP.state.invites[code]["inviter"],
-                    "fullname": APP.state.invites[code]["name"],
-                    "provider": "Invite Code",
-                },
-                "admin": False,
-                "pending_messages": [],
+                "uid": "guest_" + str(guest_prefix) + "/" + APP.state.invites[code]["inviter"],
+                "fullname": APP.state.invites[code]["name"],
+                "provider": "Invite Code",
             }
             asfquart.session.write(new_session)
             del APP.state.invites[code]
