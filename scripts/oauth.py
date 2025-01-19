@@ -61,7 +61,7 @@ async def process_oauth() -> typing.Any:
                 "admin": False,
                 "pending_messages": [],
             }
-            await asfquart.session.write(new_session)
+            asfquart.session.write(new_session)
             del APP.state.invites[code]
             return redirect("/")
         else:
