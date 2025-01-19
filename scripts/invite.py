@@ -34,13 +34,13 @@ async def process_invite() -> typing.Any:
     formdata = await asfquart.utils.formdata()
     invitee = formdata.get("name")
     sender = session.uid
-    if not invitee or sender.startswith("guest_") or sender in state.banned:
+    if not invitee or sender.startswith("guest_") or sender in APP.state.banned:
         return {"success": False, "message": "Oops, something went terribly wrong here!"}
 
     realname = session.fullname
 
     invite_id = str(uuid.uuid4())
-    state.invites[invite_id] = {
+    APP.state.invites[invite_id] = {
         "timestamp": time.time(),
         "inviter": sender,
         "inviter_name": realname,
