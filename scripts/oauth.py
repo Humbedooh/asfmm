@@ -46,6 +46,7 @@ async def process_oauth() -> typing.Any:
                 APP.state.db.insert("auditlog", {"uid": session.uid, "timestamp": time.time(), "action": f"logged in via ASF OAuth"})
                 return redirect("/")
             else:  # Not a member?!
+                asfquart.session.clear()  # Clear the session on failure
                 return "Only current ASF Members can log in via OAuth. If you are an emeritus member or a guest, please have a current member invite you."
     elif provider == "guest":
         code = formdata.get("code")
