@@ -600,7 +600,7 @@ async function chat() {
             linediv.inject(namediv);
             linediv.inject(datediv);
             linediv.inject(messagediv);
-            let scroll_to_bottom = Math.floor(output.scrollHeight - output.offsetHeight) - Math.floor(output.scrollTop) < 5 ? true : false;
+            let scroll_to_bottom = Math.floor(channeldiv.scrollHeight - channeldiv.offsetHeight) - Math.floor(channeldiv.scrollTop) < 5 ? true : false;
             channeldiv.inject(linediv);
             if (scroll_to_bottom) {  // Only scroll if we are at the bottom already.
                 channeldiv.scrollTo(0, channeldiv.scrollHeight);
