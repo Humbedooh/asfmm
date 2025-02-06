@@ -600,8 +600,11 @@ async function chat() {
             linediv.inject(namediv);
             linediv.inject(datediv);
             linediv.inject(messagediv);
+            let scroll_to_bottom = Math.floor(output.scrollHeight - output.offsetHeight) - Math.floor(output.scrollTop) < 5 ? true : false;
             channeldiv.inject(linediv);
-            channeldiv.scrollTo(0, channeldiv.scrollHeight);
+            if (scroll_to_bottom) {  // Only scroll if we are at the bottom already.
+                channeldiv.scrollTo(0, channeldiv.scrollHeight);
+            }
 
             // Notify on mention??
             if (js.message.match('@' + prefs.credentials.login + "\\b") && notify_user) {
