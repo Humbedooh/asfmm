@@ -661,8 +661,10 @@ async function check_send(el, force=false) {
         const message = el.value;
         // Block people trying to announce themselves...
         if (message.match(/^\s*[-a-z0-9]+\s+\|\s+\S*/)) {
-            alert("It looks like you are trying to announce yourself. This is NOT needed. Your attendance has been recorded. If you are acting as a proxy for others, please click the Proxies button.")
-            return
+            let ok = confirm("It looks like you are trying to announce yourself. This is NOT needed. Your attendance has been recorded; please click \"Cancel\". If you are acting as a proxy for others, please click the Proxies button.\nIf you are NOT announcing yourself, click \"Ok\" to send your message.");
+            if (!ok) {
+                return
+            }
         }
         // Commands?
         let action_m = message.match(/^\/([a-z]+)\s+(\S+)$/);
