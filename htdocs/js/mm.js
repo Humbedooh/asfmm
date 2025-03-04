@@ -502,9 +502,11 @@ function assign_proxies() {
 async function send_proxies() {
     let modal = document.getElementById("modal");
     let proxies = [];
-    for (let line of document.getElementById('proxies').value.split(/\r?\n/)) {
-        let asfid = line.split(/\s/)[0];
-        proxies.push(asfid);
+    for (const line of document.getElementById('proxies').value.split(/\r?\n/)) {
+        const m = line.trim().match(/^\S+/);
+        if (m) {
+            proxies.push(m[0]);
+        }
     }
     const resp = await POST("/proxy", {
         members: proxies
