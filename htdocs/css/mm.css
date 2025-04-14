@@ -199,7 +199,7 @@ footer {
     display: inline-block;
     vertical-align: top;
     width: 100%;
-    height: calc(100vh - 450px);
+    height: 100%;
     border: 1px solid #0003;
     border-top: none;
     margin: 0 auto;
