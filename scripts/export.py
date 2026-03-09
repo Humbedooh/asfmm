@@ -43,17 +43,19 @@ async def process_export() -> typing.Any:
     tar = tarfile.open(mode="w:gz", fileobj=out)
 
     # Export attendance
-    attendance = "\n".join(APP.state.quorum.members).encode('utf-8')
-    file = io.BytesIO(attendance)
+    attendance = "\n".join(sorted(APP.state.quorum.members)).encode('utf-8')
+    file = io.BytesIO(attendance + "\n") # terminate last line
     info = tarfile.TarInfo(name="attendance.txt")
     info.size = len(attendance)
+    info.mtime = int(time.time())
     tar.addfile(tarinfo=info, fileobj=file)
 
     # Export proxy attendance (quorum minus in-person attendance)
-    proxy_attendance = "\n".join([x for x in APP.state.quorum.proxies]).encode('utf-8')
-    file = io.BytesIO(proxy_attendance)
+    proxy_attendance = "\n".join([x for x in sorted(APP.state.quorum.proxies)]).encode('utf-8')
+    file = io.BytesIO(proxy_attendance + "\n") # terminate last line
     info = tarfile.TarInfo(name="proxies-counted.txt")
     info.size = len(proxy_attendance)
+    info.mtime = int(time.time())
     tar.addfile(tarinfo=info, fileobj=file)
 
     # Export audit log
@@ -64,6 +66,7 @@ async def process_export() -> typing.Any:
     file = io.BytesIO(auditlog)
     info = tarfile.TarInfo(name="auditlog.txt")
     info.size = len(auditlog)
+    info.mtime = int(time.time())
     tar.addfile(tarinfo=info, fileobj=file)
 
     # Export chat logs
@@ -77,6 +80,7 @@ async def process_export() -> typing.Any:
         file = io.BytesIO(logfile)
         info = tarfile.TarInfo(name=f"chat-{room.name}.txt")
         info.size = len(logfile)
+        info.mtime = int(time.time())
         tar.addfile(tarinfo=info, fileobj=file)
 
     # Close up and send
