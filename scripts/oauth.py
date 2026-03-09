@@ -43,7 +43,7 @@ async def process_oauth() -> typing.Any:
             session = await asfquart.session.read()
             if session and session.uid in APP.state.members:
                 APP.state.quorum.add(session.uid)
-                APP.state.db.insert("auditlog", {"uid": session.uid, "timestamp": time.time(), "action": f"logged in via ASF OAuth"})
+                APP.state.db.insert("auditlog", {"uid": session.uid, "timestamp": time.time(), "action": "logged in via ASF OAuth"})
                 return redirect("/")
             else:  # Not a member?!
                 asfquart.session.clear()  # Clear the session on failure

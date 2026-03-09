@@ -18,7 +18,6 @@
 """Various classes in use by ASFMM"""
 
 import time
-import typing
 import asfpy.sqlite
 import uuid
 import yaml
