@@ -19,8 +19,6 @@ import asfquart.auth
 import asfquart.session
 import asfquart.utils
 import typing
-import uuid
-import time
 
 """Management end point for ASFMM"""
 
@@ -80,5 +78,5 @@ async def process_mgmt() -> typing.Any:
                     room.messages.remove(msg)
         return {
             "success": True,
-            "message": f"Message redacted from records",
+            "message": "Message redacted from records",
         }
