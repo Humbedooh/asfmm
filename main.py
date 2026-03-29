@@ -50,7 +50,7 @@ def asfmm_app():
         disk_path = htdocs_path(quart.request.path)
         if disk_path:
             return await quart.send_from_directory("htdocs", disk_path)
-
+        return quart.Response(status=404)
 
     return app
 
