@@ -15,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import queue
 import asfquart
 import asfquart.auth
 import asfquart.session
@@ -41,7 +42,8 @@ async def process_chat() -> typing.Any:
     if whoami in APP.state.banned:  # If banned, break and don't send messages at all
         return {}
     hashuid = uuid.uuid4()
-    APP.state.pending_messages[hashuid] = []
+    # This is populated by ChatRoom.add_message
+    APP.state.pending_messages[hashuid] = queue.SimpleQueue()
     try:
         # Init some vars for tracking
         pongometer = 0
@@ -72,10 +74,9 @@ async def process_chat() -> typing.Any:
         while True:
             if whoami in APP.state.banned:  # If banned, break and don't send messages at all
                 return {}
-            if len(APP.state.pending_messages[hashuid]):
-                to_send = APP.state.pending_messages[hashuid].copy()  # copy to prevent race condition
-                APP.state.pending_messages[hashuid].clear()  # clear, so next iteration we only get new messages
-                for message in to_send:
+            try:
+                while True:
+                    message = APP.state.pending_messages[hashuid].get_nowait()
                     await quart.websocket.send_json(
                         {
                             "msgid": message["uid"],
@@ -86,6 +87,8 @@ async def process_chat() -> typing.Any:
                             "message": message["message"],
                         }
                     )
+            except queue.Empty:
+                pass
             APP.state.attendees[whoami] = time.time()
             if pongometer % 10 == 0:
                 currently_attending = set()
