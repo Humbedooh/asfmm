@@ -81,8 +81,8 @@ class ChatRoom:
         }
         self.state.db.insert("messages", message)
         self.messages.append(message)
-        for subscriber, messages in self.state.pending_messages.items():
-            messages.append(message)
+        for messageQueue in self.state.pending_messages.values():
+            messageQueue.put(message)
 
 
 class Quorum:
