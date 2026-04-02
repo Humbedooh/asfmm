@@ -71,7 +71,7 @@ async def process_chat() -> typing.Any:
         # Now iterate over any new incoming messages, as well as status updates
         while True:
             if whoami in APP.state.banned:  # If banned, break and don't send messages at all
-                return {}
+                break # drop out and clear pending_messages entry
             if len(APP.state.pending_messages[hashuid]):
                 to_send = APP.state.pending_messages[hashuid].copy()  # copy to prevent race condition
                 APP.state.pending_messages[hashuid].clear()  # clear, so next iteration we only get new messages
